@@ -10,7 +10,7 @@ Zrozumienie protokołów sieciowych, analizy ruchu i wykrywania zagrożeń w kon
 - `01_tcp_udp_basics` - protokoły TCP i UDP,
 - `02_dns` - system DNS i jego nadużycia, 
 - `03_http_https` - protokół HTTP/HTTPS,   
-- `04_network_tools_soc` - narzędzie analityczne (tcpdump, Wireshark, ss),
+- `04_network_tools_soc` - narzędzia analityczne (tcpdump, Wireshark, ss),
 - `05_firewall_and_ids` - firewall i systemy wykrywania włamań,
 - `06_network_attacks_and_detection` - ataki sieciowe i ich detekcja,
 - `07_soc_network_labs` - praktyczne scenariusze i analiza pcaps.
