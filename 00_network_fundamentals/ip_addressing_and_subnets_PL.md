@@ -1,13 +1,13 @@
 # ip_addressing_and_subnets
 
 ## Cel
-Zrozumienie jak działa adresowanie w sieciach, jak obliczyć ilość hostów, jakie są adresy zarezerwowane dla sieci praz broadcast (rozgłoszeniowe), czym jest gateway (brama) oraz  czym są podsieci i jakie są powody podziału sieci na mniejsze podsieci. 
+Zrozumienie jak działa adresowanie w sieciach, jak obliczyć ilość hostów, jakie są adresy zarezerwowane dla sieci oraz broadcast (rozgłoszeniowe), czym jest gateway (brama) oraz czym są podsieci i jakie są powody podziału sieci na mniejsze podsieci. 
 
 ## Czym jest adres IP
-Adres IP sieci to 4 liczby (oktety) oddzielone kropkami, np. `192.168.1.10`. Każda z tych 4 liczb zajmuje 1 bajt, a 1 bejt to 8 bitów (0-255). Adres ten składa się z dwóch części:
+Adres IP sieci to 4 liczby (oktety) oddzielone kropkami, np. `192.168.1.10`. Każda z tych 4 liczb zajmuje 1 bajt, a 1 bajt to 8 bitów (0-255). Adres ten składa się z dwóch części:
 - część sieciowa, która identyfikuje sieć,
 - część hosta, która identyfikuje konkretne urządzenie w sieci (stacja robocza, drukarka, itp).   
-Która część jest, która określa maska podsieci. 
+Która część jest która określa maska podsieci. 
 
 ## Maska podsieci  
 Maska podsieci określa, która część adresu identyfikuje sieć, a która konkretne urządzenia. Rozróżnić to można na podstawie wartości oktetu:
@@ -27,7 +27,7 @@ Stąd wynika, że dla sieci przeznaczone jest 24 bity (jedynki) oraz 8 bitów na
 Przykład 2: 
 ``` 
 Maska podsieci w zapisie dziesiętnym: 255.255.128.0
-Maska podsieci w zapisie binarnym: 11111111.11111111.10000000.0000000
+Maska podsieci w zapisie binarnym: 11111111.11111111.10000000.00000000
 Czyli: 17 bitów dla sieci oraz 15 dla hosta.
 ```
 Przykład 3:
@@ -49,13 +49,12 @@ Obecnie celem uproszczenia zapisu maski podsieci stosuje się zapis CIDR. CIDR t
 ```
 W teorii nie ma sztywno określonej minimalnej liczby bitów sieci, można użyć maski `/0` lub `/1`, lecz w praktyce:
 - w sieciach lokalnych (LAN) nie używa się masek mniejszych niż `/8`,
-- najmniejsza użyteczna maska do łączenia dwóch urządzeń to `/30`, która daje 2 adresy dla hostów. 
-- maska `/10` jest używana do łączenia routerów,
+- najmniejsza użyteczna maska do łączenia dwóch urządzeń to `/30`, która daje 4 adresy łącznie w tym 2 dla hostów. Jest zwykle używana do łączeń point-to-point miedzy routerami. 
 - maski poniżej `/8` to ogromne sieci, które są niepraktyczne ze względu na:
 	- bezpieczeństwo - jedna wielka sieć to jeden wielki obszar ataku. Nie można jej podzielić na mniejsze,
 	- wydajność - ruch broadcast zalewa całą sieć,
-	- zarządzenie - w dużej sieci trudniej znaleźć błędy i awarie.   
-Dzięki zastosowaniu odpowiednich masek można podzielić jedną sieć na kilka mniejszych (subneting), np. żeby każdy dział (IT, księgowość, itp) miał swoją sieć odizolowaną od sieci innych działów. To właśnie maska określa, na ile części dzielą się bajty adresu:
+	- zarządzanie - w dużej sieci trudniej znaleźć błędy i awarie.   
+Dzięki zastosowaniu odpowiednich masek można podzielić jedną sieć na kilka mniejszych (subnetting), np. żeby każdy dział (IT, księgowość, itp) miał swoją sieć odizolowaną od sieci innych działów. To właśnie maska określa, na ile części dzielą się bajty adresu:
 - `128` - 2 części sieci, każda po 126 hostów, 
 - `192` - 4 części, każda po 62 hostów, 
 - `224` - 8 części, każda po 30 hostów, 
@@ -68,7 +67,7 @@ Im większa liczba w masce tym więcej podsieci i mniej hostów w każdej z nich
 - 255.224.0.0,
 - 128.0.0.0.
 Każdy powyższy podział jest możliwy jednak rzadko stosuje się go w 1 bajcie, ponieważ np. 128.0.0.0 to byłyby dwie ogromne sieci, taki podział stosuje się zwykle tylko w sieciach eksperymentalnych.  
-UWAGA: kiedyś stosowano klasy adresów zamiast CIDR, obecnie nie stosowany jednak warto go znać:
+UWAGA: kiedyś stosowano klasy adresów zamiast CIDR, obecnie niestosowany jednak warto go znać:
 | Klasa | Pierwszy oktet | Domyślna maska | CIDR |
 |-------|----------------|----------------|------|
 | A | 1-126 | 255.0.0.0 | /8 |
@@ -77,7 +76,7 @@ UWAGA: kiedyś stosowano klasy adresów zamiast CIDR, obecnie nie stosowany jedn
 
 ## Obliczanie adresów i hostów 
 Należy pamiętać, że w każdej sieci lub podsieci występują dwa adresy, których nie można przypisać hostom, należy je wyjąć z puli adresów hostów:
-- adres sieci - pierwszy adres w sieci, np 192.168.0.0 przy masce `/24/` to identyfikator sieci, 
+- adres sieci - pierwszy adres w sieci, np 192.168.0.0 przy masce `/24` to identyfikator sieci, 
 - broadcast - ostatni adres (192.168.0.255) to adres rozgłoszeniowy, na którym komunikują (ogłaszają, pytają o adres MAC, odpowiadają) się urządzenia.  
 Na obliczenie ilości adresów hostów w sieci jest prosty wzór:
 - Bity hosta = 32 (wszystkie bity adresu) - CIDR (bity sieci), 
@@ -98,4 +97,4 @@ Przykład:
 - adres prywatny - to wewnętrzny adres sieci, nie jest widoczny w internecie (np. 192.168.0.0).
 
 ## Gateway 
-Jest to brama - router, przez który można wejść do internetu lub innej sieci. Router zawsze ma adres hosta sieci, nie jest on z góry narzucony jednak w praktyce nadaje się mu pierwszy adres hosta dostępny w danej sieci, np. 1192.168.0.1.
+Jest to brama - router, przez który można wejść do internetu lub innej sieci. Router zawsze ma adres hosta sieci, nie jest on z góry narzucony jednak w praktyce nadaje się mu pierwszy adres hosta dostępny w danej sieci, np. 192.168.0.1.
