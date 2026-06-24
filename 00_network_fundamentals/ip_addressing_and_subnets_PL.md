@@ -68,6 +68,7 @@ Im większa liczba w masce tym więcej podsieci i mniej hostów w każdej z nich
 - 128.0.0.0.
 Każdy powyższy podział jest możliwy jednak rzadko stosuje się go w 1 bajcie, ponieważ np. 128.0.0.0 to byłyby dwie ogromne sieci, taki podział stosuje się zwykle tylko w sieciach eksperymentalnych.  
 UWAGA: kiedyś stosowano klasy adresów zamiast CIDR, obecnie niestosowany jednak warto go znać:
+
 | Klasa | Pierwszy oktet | Domyślna maska | CIDR |
 |-------|----------------|----------------|------|
 | A | 1-126 | 255.0.0.0 | /8 |
