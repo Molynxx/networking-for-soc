@@ -12,7 +12,7 @@ Która część jest która określa maska podsieci.
 ## Maska podsieci  
 Maska podsieci określa, która część adresu identyfikuje sieć, a która konkretne urządzenia. Rozróżnić to można na podstawie wartości oktetu:
 - 255 oznacza, że ta część adresu jest zarezerwowana dla sieci, 
-- 0 - oznacza, że ta część adresu jest zarezerwowana dla hosta, 
+- 0 - oznacza, że ta część adresu jest zarezerwowana dla hosta,   
 - inna wartość np 128 oznacza, że sieć jest podzielona na mniejsze sieci.   
 Jednak najłatwiej to zrozumieć rozpisując wartości maski na system binarny:
 - bity o wartości 1 oznaczają bity przeznaczone na sieć,
@@ -61,13 +61,16 @@ Dzięki zastosowaniu odpowiednich masek można podzielić jedną sieć na kilka 
 - `224` - 8 części, każda po 30 hostów, 
 - `240` - 16 części, każda po 14 hostów, 
 - `248` - 32 części, każda po 6 hostów, 
-- `252` - 64 części, każda po 2 hosty.  
+- `252` - 64 części, każda po 2 hosty.   
+
 Im większa liczba w masce tym więcej podsieci i mniej hostów w każdej z nich. Podział ten w zasadzie można wprowadzić w każdym bajcie:
 - 255.255.255.128,
 - 255.255.192.0,
 - 255.224.0.0,
-- 128.0.0.0.
+- 128.0.0.0.  
+
 Każdy powyższy podział jest możliwy jednak rzadko stosuje się go w 1 bajcie, ponieważ np. 128.0.0.0 to byłyby dwie ogromne sieci, taki podział stosuje się zwykle tylko w sieciach eksperymentalnych.  
+
 UWAGA: kiedyś stosowano klasy adresów zamiast CIDR, obecnie niestosowany jednak warto go znać:
 
 | Klasa | Pierwszy oktet | Domyślna maska | CIDR |
@@ -100,3 +103,28 @@ Przykład:
 
 ## Gateway 
 Jest to brama - router, przez który można wejść do internetu lub innej sieci. Router zawsze ma adres hosta sieci, nie jest on z góry narzucony jednak w praktyce nadaje się mu pierwszy adres hosta dostępny w danej sieci, np. 192.168.0.1.
+
+## Case study
+
+Firma ma sieć 192.168.1.0/24. Potrzebuje wydzielić 3 podsieci dla IT, księgowości oraz marketingu. Każdy dział ma maksymalnie 40 komputerów. Administrator musi też zostawić miejsce na czwartą podsieć na przyszłość.  
+Pytania:
+1. Jaka maska (CIDR) będzie odpowiednia, żeby każda sieć miała miejsce na >= 40 hostów?
+2. Na ile podsieci dzieli się sieć z tą maską?
+3. Ile adresów będzie miała każda z podsieci?
+4. Podaj adresy sieci i broadcast dla każdej z tych podsieci, oraz zakresy adresów dla hostów.  
+
+Odpowiedzi:
+1. Najbardziej odpowiednia maska w tym przypadku to 255.255.255.192 -> czyli /26 CIDR, 
+2. Maska ta podzieli sieć na 4 części, 
+3. Sieć zostanie podzielona na 4 równe części, ilość adresów dla sieci oraz ilość adresów dla hostów obliczamy:
+- Bity hosta = 32 - 26 = 6,
+- Adresy w sieci = 2^6 = 64, 
+- Adresy hostów - 64 - 2 = 62, ponieważ należy odjąć pierwszy bit (adres sieci) oraz ostatni bit (adres rozgłoszeniowy), 
+4. Adresy broadcast, adresy sieci oraz zakresy adresów dla hostów:
+
+| Dział | Adres sieci | Adres broadcast | Adresy hostów |
+|-------|-------------|-----------------|---------------|
+| IT | 192.168.1.0 | 192.168.1.63 | 1-62 |
+| Księgowość | 192.168.1.64 | 192.168.1.127 | 65-126 |
+| Marketing | 192.168.1.128 | 192.168.1.191 | 129-190 |
+| Zapasowa sieć |192.168.1.192 | 192.168.1.255 | 193-254 |
