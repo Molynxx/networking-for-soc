@@ -119,7 +119,7 @@ Odpowiedzi:
 3. Sieć zostanie podzielona na 4 równe części, ilość adresów dla sieci oraz ilość adresów dla hostów obliczamy:
 - Bity hosta = 32 - 26 = 6,
 - Adresy w sieci = 2^6 = 64, 
-- Adresy hostów - 64 - 2 = 62, ponieważ należy odjąć pierwszy bit (adres sieci) oraz ostatni bit (adres rozgłoszeniowy), 
+- Adresy hostów - 64 - 2 = 62, ponieważ należy odjąć pierwszy adres (adres sieci) oraz ostatni adres (adres rozgłoszeniowy), 
 4. Adresy broadcast, adresy sieci oraz zakresy adresów dla hostów:
 
 | Dział | Adres sieci | Adres broadcast | Adresy hostów |
