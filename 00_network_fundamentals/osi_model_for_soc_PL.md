@@ -116,7 +116,7 @@ Zagrożenia: SOC rzadko analizuje tą warstwę, warto jednak widzieć, że fizyc
 		<td rowspan="2"> Warstwa dostępu do sieci (1)</td>
 	</tr>
 	<tr>
-		<td> Warstwa fizyczna </td>
+		<td> Warstwa fizyczna (1) </td>
 	</tr>
 </table>
 
