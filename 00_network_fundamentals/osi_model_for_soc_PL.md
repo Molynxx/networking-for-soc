@@ -88,12 +88,35 @@ Zagrożenia: SOC rzadko analizuje tą warstwę, warto jednak widzieć, że fizyc
 
 ## Zestawienie modeli OSI i TCP/IP
 
-| Model OSI | Model TPC/IP |
-|-----------|--------------|
-| Aplikacji |       |
-| Prezentacji | Aplikacji |
-| Sesji |     |
-| Transportowa | Transportowa |
-| Sieciowa | Internetowa |
-| Łącza danych | Dostępu do sieci |
-| Fizyczna |    |
+<table>
+	<tr>
+		<th> Model OSI </th>
+		<th> Model TCP/IP </th>
+	</tr>
+	<tr>
+		<td> Warstwa aplikacji (7) </td>
+		<td rowspan="3"> Warstwa Aplikacji (4) </td>
+	</tr>
+	<tr>
+		<td> Warstwa Prezentacji (6) </td>
+	</tr>
+	<tr>
+		<td> Warstwa sesji (5) </td>
+	</tr>
+	<tr>
+		<td> Warstwa transportowa (4) </td>
+		<td> Warstwa transportowa (3) </td>
+	</tr>
+	<tr>
+		<td> Warstwa sieciowa (3) </td>
+		<td> Warstwa internetowa (2) </td>
+	</tr>
+	<tr>
+		<td> Warstwa łącza danych (2) </td>
+		<td rowspan="2"> Warstwa dostępu do sieci (1)</td>
+	</tr>
+	<tr>
+		<td> Warstwa fizyczna </td>
+	</tr>
+</table>
+
