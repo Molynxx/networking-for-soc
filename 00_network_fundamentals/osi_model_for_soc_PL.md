@@ -8,7 +8,7 @@ Jest to model teoretyczny, który dzieli komunikację sieciową na 7 warstw - od
 - karta sieciowa z Intela, działa z routerem Cisco, 
 - przeglądarka Chrome działa z serwerem Apache, 
 - Windows łączy się z Linuxem przez SSH.   
-UWAGA: To jest wyłącznie model teoretyczny (szablon), który nie jest zgodny z rzeczywistością - prawdziwy internet używa modelu TCP?IP który posiada 4 warstwy. Jednak model OSI warto znać, bo daje wspólny język np. stwierdzenie, że problem występuje w warstwie 3 to wszyscy wiedzą, że chodzi o IP/routing. 
+UWAGA: To jest wyłącznie model teoretyczny (szablon), który nie jest zgodny z rzeczywistością - prawdziwy internet używa modelu TCP/IP który posiada 4 warstwy. Jednak model OSI warto znać, bo daje wspólny język np. stwierdzenie, że problem występuje w warstwie 3 to wszyscy wiedzą, że chodzi o IP/routing. 
 
 ## Warstwy modeli OSI
 
@@ -32,7 +32,7 @@ Jest to warstwa, w której działają protokoły, które obsługują aplikacje w
 Zagrożenia: Ataki SQLi, XSS, brute force, phishing - to wszystko dzieje się w tej warstwie. W logach widać konkretne żądania HTTP, próby logowania SSH, zapytania DNS.
 
 ### 6 Warstwa prezentacji 
-Ta warstwa odpowiada za przekształcenie danych tak, aby aplikacja mogła je zrozumieć. Jednymi ale bardzo ważnym protokołem tej warstwy jest protokół TLS/SSL, który szyfruje połączenia. Warstwa ma za zadanie:
+Ta warstwa odpowiada za przekształcenie danych tak, aby aplikacja mogła je zrozumieć. Jedynym, ale bardzo ważnym protokołem tej warstwy jest protokół TLS/SSL, który szyfruje połączenia. Warstwa ma za zadanie:
 - Zaszyfrować połączenia (TLS/SSL),
 - przekonwertować formaty - by treść była zrozumiałą dla aplikacji, 
 - skompresować - czyli zmniejszyć rozmiar danych przed wysłaniem,
@@ -47,13 +47,13 @@ Tak, jak należy rozpocząć rozmowę telefoniczną wybierając numer tak warstw
 Zagrożenia: Session hijacking - atakujący może wykraść ciasteczko sesyjne i podszywać się pod zalogowanego użytkownika, nie potrzebuje hasła. 
 
 ### 4 Warstwa transportowa
-To warstwa, której cellem jest niezawodne dostarczenie danych miedzy hostami. Jej zadania to:
+To warstwa, której celem jest niezawodne dostarczenie danych miedzy hostami. Jej zadania to:
 - wybór protokołu - decyduje, czy użyć TCP czy UDP, 
 - segmentacja - dzieli dane na mniejsze części - segmenty, 
 - numeracja - nadaje numer każdej części, żeby można je było poskładać w całość w odpowiedniej kolejności, 
 - kontrola przepływu - reguluje szybkość wysyłania, by odbiorca nadążał, 
-- wykrywanie błędów - sprawdza, czy dane dotarły w całości i bez błędów (chceksum).
-Zagrożenia: SYN flood (atak na TCP), podejrzane protokoły (np. 4444, 1337, 31337) - reverse shell. 
+- wykrywanie błędów - sprawdza, czy dane dotarły w całości i bez błędów (checksum).
+Zagrożenia: SYN flood (atak na TCP), podejrzane porty (np. 4444, 1337, 31337) - reverse shell. 
 
 ### 3 Warstwa sieciowa
 To warstwa nawigacji, ustala kierunek wysłania danych. Ta warstwa ma zadania:
@@ -64,7 +64,7 @@ To warstwa nawigacji, ustala kierunek wysłania danych. Ta warstwa ma zadania:
 Zagrożenia: IP spoofing, (fałszowanie adresu), DDoS, ICMP tunneling. Za pomocą logów można sprawdzić z jakiego IP przyszedł atak. 
 
 ### 2 Warstwa łącza danych
-Warstwa ta odpowiada za j=komunikację w tej samej sieci lokalnej, Jeśli warstwa sieciowa decyduje gdzie paczka ma dotrzeć, to warstwa łącza danych fizycznie przekazuje ją do najbliższego urządzenia (routera, switcha). Warstwa ma zadania:
+Warstwa ta odpowiada za komunikację w tej samej sieci lokalnej, Jeśli warstwa sieciowa decyduje gdzie paczka ma dotrzeć, to warstwa łącza danych fizycznie przekazuje ją do najbliższego urządzenia (routera, switcha). Warstwa ma zadania:
 - ARP - protokół, który tłumaczy adres IP na adres MAC (kto ma IP X? Podaj swój MAC). MAC to fizyczny adres karty sieciowej, unikalny, 48 bitowy, zapisywany szesnastkowo, np. aa:bb:cc:dd:ee:ff,
 - tworzenie ramek - pakuje dane z warstwy sieciowej w ramki, dodając adresy MAC źródła i celu oraz informacje kontrolne, 
 - wykrywanie błędów - dodaje sumę kontrolną, aby sprawdzić, czy ramka nie została uszkodzona podczas transmisji. Jeśli ramka została uszkodzona odrzuca ją. 
@@ -77,12 +77,12 @@ Warstwa ta fizycznie przenosi sygnał, zależnie od medium:
 - światłowód - szkło, światło - najszybsze,
 - fale radiowe - Wi-Fi, Bluetooth, 
 - impulsy elektryczne - prąd w kablu. 
-Zagrożenia: SOC rzadko analizuje tą warstwę, warto jednak widzieć, że fizyczny dostęp do switcha jest bardzo niebezpieczny, bo atakujący może podpiąć własne urządzenie. 
+Zagrożenia: SOC rzadko analizuje tę warstwę, warto jednak wiedzieć, że fizyczny dostęp do switcha jest bardzo niebezpieczny, bo atakujący może podpiąć własne urządzenie. 
 
 ## Warstwy modelu TCP/IP (stosowany w praktyce)
 
-4 - Warstwa aplikacji - odpowiada za te same czynności, które w modelu OSI wykonują warstwy: aplikacji, prezentacji i sesji, 
-3 - Warstwa transportowa - odpowiada za te same czynności co warstwa transportowa w modelu OSI,
+4 - warstwa aplikacji - odpowiada za te same czynności, które w modelu OSI wykonują warstwy: aplikacji, prezentacji i sesji, 
+3 - warstwa transportowa - odpowiada za te same czynności co warstwa transportowa w modelu OSI,
 2 - warstwa internetowa - odpowiada za te same zadania co warstwa sieci modelu OSI, 
 1 - warstwa dostępu do sieci - łączy w sobie zadania z warstw: łącza danych i fizyczne z modelu OSI. 
 
