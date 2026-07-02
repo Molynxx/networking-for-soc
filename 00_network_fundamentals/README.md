@@ -4,7 +4,7 @@
 Zrozumienie podstaw adresacji IP, modelu OSI oraz najważniejszych protokołów i portów sieciowych z perspektywy analityka SOC. 
 
 ## Zakres
-- `ip_addressing_and_subnets` - adresacja IPv4, maski podsieci, CIDR, obliczanie hostów, adresy publiczne i prywatne, gateway, subneting, 
+- `ip_addressing_and_subnets` - adresacja IPv4, maski podsieci, CIDR, obliczanie hostów, adresy publiczne i prywatne, gateway, subnetting, 
 - `osi_model_for_soc` - model OSI (7 warstw) i model TCP/IP (4 warstwy), zadania poszczególnych warstw, protokoły i zagrożenia z perspektywy SOC,
 - `common_ports_and_protocols` - przegląd protokołów sieciowych (HTTP, DNS, SSH, TCP, UDP, ARP i innych), wraz z portami, sposobem działania i zagrożeniami. 
 
