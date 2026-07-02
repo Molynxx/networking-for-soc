@@ -172,7 +172,7 @@ Zagrożenia: session hijacking - atakujący kradnie ciasteczko sesyjne np. przez
 - co robi: to niezawodna metoda transmisji danych, dzięki nawiązaniu połączenia z odbiorcą, utrzymaniu go i sprawdzaniu sum kontrolnych gwarantuje, że dane dotrą bezbłędnie w całości oraz w odpowiedniej kolejności, 
 - jak działa "TCP handshake - three-way handshake"):
 	- SYN: - klient wysyła żądanie do serwera: "Chcę się połączyć, mój numer startowy to X", 
-	- SYN-ACK - serwer odpowiada: "OK, przyjąłem, mój numer to Y. POtwierdzam Twój X+1",
+	- SYN-ACK - serwer odpowiada: "OK, przyjąłem, mój numer to Y. Potwierdzam Twój X+1",
 	- ACK - klient odpowiada serwerowi: "Potwierdzam Y+1, połączenie nawiązane".   
 	Następnie zostają przesyłane dane, TCP numeruje każdy segment, a jeśli coś zaginie prosi o powtórzenie. Na końcu następuje FIN (zakończenie). 
 - zagrożenia: SYN flood - atakujący wysyła masę SYN bez dokończenia handshake, co powoduje, że serwer czeka na ACK, to zapycha pamięć i prowadzi do DoS. Podejrzane porty: 4444, 1337, 31337. 
