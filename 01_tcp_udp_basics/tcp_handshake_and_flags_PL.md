@@ -130,7 +130,17 @@ Widać tutaj wyraźnie, "rozmowę" klienta z serwerem przez port 22, a więc po�
 	- sprawdzić, jakie dane mogły zostać wstrzyknięte lub wykradzione podczas przejęcia sesji, 
 	- wdrożyć szyfrowanie (TLS/SSH) dla chronionej usługi, 
 	- przeanalizować, w jaki sposób atakujący uzyskał pozycję MitM (ARP spoofing, skompromitowany host) i usunąć przyczynę, 
-	- jeśli źródłem ataku jest skompromitowany host wewnętrzny - odizolować go i przeprowadzić analizę powłamaniową 
+	- jeśli źródłem ataku jest skompromitowany host wewnętrzny - odizolować go i przeprowadzić analizę powłamaniową.
+
+## Kiedy należy sięgnąć po tcpdump
+Nie każde podejrzanie zachowanie wymaga analizy tcpdump. Jednak są przypadki kiedy to kluczowe:
+- `auth.log` - masowe nieudane logowania (`failed password`) z jednego IP w krótkim czasie, 
+- `syslog/journalctl` - komunikaty jądra o możliwym SYN Flood, przepełnieniu tablicy conntrack, 
+- `monitoring sieci` - nagły, niewyjaśniony wzrost ruchu przychodzącego na jednym porcie, 
+- `podejrzenie MitM` - nagłe zerwanie sesji, dziwne zachowanie użytkowników,
+- `podejrzenie przejęcia sesji` - nietypowa aktywność na koncie o dziwnych porach.
+
+W takich przypadkach tcpdump pozwala zajrzeć w surowe pakiety i potwierdzić lub wykluczyć atak na warstwie transportowej. 
 
 ## Case study
 
