@@ -85,6 +85,9 @@ Widać tutaj wyraźnie, "rozmowę" klienta z serwerem przez port 22, a więc po�
 		- firewall -> `SYN/ACK` -> klient,
 		- klient -> `ACK` -> firewall
 		- dopiero po tych czynnościach firewall otwiera połączenie z serwerem i przekazuje ruch. To pozwala serwerowi nie widzieć fałszywych `SYN` bo firewall przekazuje tylko prawdziwe (potwierdzone). 
+- jak zareagować: 
+	- zablokować IP atakującego na firewall (`iptables -A INPUT -s IP -j DROP`),
+	- wprowadzić zabezpieczenia SYN Cookies, Rate Limit, SYN proxy.
 
 ### TCP reset attack
 - co to jest: atakujący podsłuchuje (MitM) istniejące połączenie i wysyła fałszywy segment z flagą `RST`. Serwer zrywa połączenie. 
@@ -94,6 +97,12 @@ Widać tutaj wyraźnie, "rozmowę" klienta z serwerem przez port 22, a więc po�
 -jak się chronić:
 	- szyfrowanie (TLS, SSH) - atakujący nie zna numerów sekwencyjnych nie może więc skutecznie wysłać RST. Należy pamiętać ze TCP nie szyfruje danych, odpowiada za to protokół, który korzysta z TCP. Przykładowo: HTTP jest protokołem, w którym dane przesyłane są jawnie, natomiast HTTPS szyfruje dane, 
 	- uwierzytelnianie segmentów TCP (TCP-AO) - rzadko stosowane. To mechanizm, który podpisuje kryptograficznie każdy segment TCP. Odbiorca sprawdza podpis i jeśli się on nie zgadza, segment jest odrzucany. To uniemożliwia atakującemu wysłanie fałszywego `RST` i wstrzyknięcie danych do sesji (hijacking). Jest rzadko stosowane, ponieważ to rozwiązanie wymaga, żeby obie strony (klient i serwer) miały ten sam klucz. To trudne w dużych sieciach, dlatego powszechnie używa się po prostu TLS/SSH - to szyfruje dane i rozwiązuje ten sam problem w prostszy sposób. 
+- jak reagować:
+	- niezwłocznie zablokować podejrzane IP atakującego na firewall (`iptables -A INPUT -s IP -j DROP`),
+	- odizolować źródło MitM w sieci - jeśli to skompromitowane w sieci odłączyć go od sieci i sprawdzić do kogo należy (MAC, IP, ewidencja IT), jeśli to obce urządzenie połączone przez Wi-Fi zmienić hasło do Wi-Fi, 
+	- w przypadki skompromitowanego hosta wewnętrznego, sprawdzić czy przechwycone połączenie było szyfrowane, jeśli nie, należy uznać tokeny sesyjne i dane logowania za skompromitowane, 
+	- unieważnić sesję, zmienić hasła użytkowników, których sesje mogły zostać naruszone, 
+	- wdrożyć szyfrowanie (HTTPS, TLS dla SMTP, itd).
 
 ### TCP session hijacking
 - co to jest: atakujący przejmuje istniejącą sesję TCP (MitM), zgadując numery sekwencyjne. Może w ten sposób wstrzyknąć własne dane w sesję ofiary. 
@@ -115,6 +124,13 @@ Widać tutaj wyraźnie, "rozmowę" klienta z serwerem przez port 22, a więc po�
 - jak się chronić: 
 	- szyfrowanie (TLS, SSH) uniemożliwia wstrzyknięcie sensownych danych, 
 	- losowe numery sekwencyjne (współczesne systemy to robią). Kiedyś numery sekwencyjne były przewidywalne (np. rosły o 1). Atakujący mógł zgadnąć numer i wstrzyknąć fałszywy pakiet. Dlatego współczesne systemy operacyjne, Linux i Windows, generują całkowicie losowe początkowe numery sekwencyjne. Nie da się ich zgadnąć. To uniemożliwia atakującemu wstrzyknięcie sensownego pakietu, nawet jeśli podsłuchuje ruch (MitM).  
+- jak reagować:
+	- niezwłocznie zablokować IP atakującego na firewall (`iptables -A INPUT -s IP -j DROP`), 
+	- zakończyć przejętą sesję (restart usługi, unieważnienie tokenów),
+	- sprawdzić, jakie dane mogły zostać wstrzyknięte lub wykradzione podczas przejęcia sesji, 
+	- wdrożyć szyfrowanie (TLS/SSH) dla chronionej usługi, 
+	- przeanalizować, w jaki sposób atakujący uzyskał pozycję MitM (ARP spoofing, rouge ARP, skompromitowany host) i usunąć przyczynę, 
+	- jeśli źródłem ataku jest skompromitowany host wewnętrzny - odizolować go i przeprowadzić analizę powłamaniową 
 
 ## Case study
 
