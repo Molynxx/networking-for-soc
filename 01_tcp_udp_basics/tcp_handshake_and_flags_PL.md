@@ -100,7 +100,7 @@ Widać tutaj wyraźnie, "rozmowę" klienta z serwerem przez port 22, a więc po�
 - jak reagować:
 	- niezwłocznie zablokować podejrzane IP atakującego na firewall (`iptables -A INPUT -s IP -j DROP`),
 	- odizolować źródło MitM w sieci - jeśli to skompromitowane w sieci odłączyć go od sieci i sprawdzić do kogo należy (MAC, IP, ewidencja IT), jeśli to obce urządzenie połączone przez Wi-Fi zmienić hasło do Wi-Fi, 
-	- w przypadki skompromitowanego hosta wewnętrznego, sprawdzić czy przechwycone połączenie było szyfrowane, jeśli nie, należy uznać tokeny sesyjne i dane logowania za skompromitowane, 
+	- w przypadku skompromitowanego hosta wewnętrznego, sprawdzić czy przechwycone połączenie było szyfrowane, jeśli nie, należy uznać tokeny sesyjne i dane logowania za skompromitowane, 
 	- unieważnić sesję, zmienić hasła użytkowników, których sesje mogły zostać naruszone, 
 	- wdrożyć szyfrowanie (HTTPS, TLS dla SMTP, itd).
 
@@ -129,7 +129,7 @@ Widać tutaj wyraźnie, "rozmowę" klienta z serwerem przez port 22, a więc po�
 	- zakończyć przejętą sesję (restart usługi, unieważnienie tokenów),
 	- sprawdzić, jakie dane mogły zostać wstrzyknięte lub wykradzione podczas przejęcia sesji, 
 	- wdrożyć szyfrowanie (TLS/SSH) dla chronionej usługi, 
-	- przeanalizować, w jaki sposób atakujący uzyskał pozycję MitM (ARP spoofing, rouge ARP, skompromitowany host) i usunąć przyczynę, 
+	- przeanalizować, w jaki sposób atakujący uzyskał pozycję MitM (ARP spoofing, skompromitowany host) i usunąć przyczynę, 
 	- jeśli źródłem ataku jest skompromitowany host wewnętrzny - odizolować go i przeprowadzić analizę powłamaniową 
 
 ## Case study
