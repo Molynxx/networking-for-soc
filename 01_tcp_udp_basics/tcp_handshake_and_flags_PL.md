@@ -99,7 +99,7 @@ Widać tutaj wyraźnie, "rozmowę" klienta z serwerem przez port 22, a więc po�
 	- uwierzytelnianie segmentów TCP (TCP-AO) - rzadko stosowane. To mechanizm, który podpisuje kryptograficznie każdy segment TCP. Odbiorca sprawdza podpis i jeśli się on nie zgadza, segment jest odrzucany. To uniemożliwia atakującemu wysłanie fałszywego `RST` i wstrzyknięcie danych do sesji (hijacking). Jest rzadko stosowane, ponieważ to rozwiązanie wymaga, żeby obie strony (klient i serwer) miały ten sam klucz. To trudne w dużych sieciach, dlatego powszechnie używa się po prostu TLS/SSH - to szyfruje dane i rozwiązuje ten sam problem w prostszy sposób. 
 - jak reagować:
 	- niezwłocznie zablokować podejrzane IP atakującego na firewall (`iptables -A INPUT -s IP -j DROP`),
-	- odizolować źródło MitM w sieci - jeśli to skompromitowane w sieci odłączyć go od sieci i sprawdzić do kogo należy (MAC, IP, ewidencja IT), jeśli to obce urządzenie połączone przez Wi-Fi zmienić hasło do Wi-Fi, 
+	- odizolować źródło MitM w sieci - jeśli to skompromitowany host w sieci - odłączyć go od sieci i sprawdzić do kogo należy (MAC, IP, ewidencja IT), jeśli to obce urządzenie połączone przez Wi-Fi zmienić hasło do Wi-Fi, 
 	- w przypadku skompromitowanego hosta wewnętrznego, sprawdzić czy przechwycone połączenie było szyfrowane, jeśli nie, należy uznać tokeny sesyjne i dane logowania za skompromitowane, 
 	- unieważnić sesję, zmienić hasła użytkowników, których sesje mogły zostać naruszone, 
 	- wdrożyć szyfrowanie (HTTPS, TLS dla SMTP, itd).
