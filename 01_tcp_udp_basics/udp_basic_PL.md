@@ -53,7 +53,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 	- `-A INPUT` - dodaj regułę do ruchu przychodzącego, 
 	- `-p udp` - dotyczy tylko pakietów UDP,
 	- `-m hashlimit` - użyj modułu hashlimit (bardziej precyzyjny niż limit),
-	- `--hashlimit-name DNS_LIMIT` - nazwa każdej reguły musi być unikalna, 
+	- `--hashlimit-name UDP_LIMIT` - nazwa każdej reguły musi być unikalna, 
 	- `--hashlimit-above 50` - jeśli pakietów z danego IP jest więcej niż 50 na sekundę. 
 	- `--hashlimit-burst 100` - dozwolony jest skok do 100 pakietów (np. na starcie zapytania),
 	- `--hashlimit-mode srcip` - limit liczony dla każdego adresu źródłowego z osobna, 
@@ -71,7 +71,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 		- serwer DNS może odpowiadać tylko na zapytania od każdego (np. o domenę), 
 		- jednak jeśli pytanie wymaga rekurencji (w sytuacji gdy serwer musi poszukać odpowiedzi na innych serwerach), to odpowiada wyłącznie zaufanym źródłom. Jeśli zapytanie do serwera wysyła ktoś spoza zaufanego źródła serwer odpowiada tylko na proste zapytania (np. o domeny, które ma już w swojej podręcznej pamięci), inne zapytania ignoruje.  
 	Takie ograniczenie rekurencji jest częścią konfiguracji samego serwera DNS, który ma wbudowane mechanizmy pozwalające mu decydować, skąd akceptuje zapytania. Sposób konfiguracji zależy od oprogramowania serwera. 
-	- rate limiting - ograniczenie liczby zapytań DNS z jednego adresu IP w jednostce czasu celem uniemożliwienia ataku DNS amplification. POlega na ustawieniu odpowiedniej reguły na firewallu dotyczącej portu 53 na którym działa DNS. Przykładowe polecenie:  
+	- rate limiting - ograniczenie liczby zapytań DNS z jednego adresu IP w jednostce czasu celem uniemożliwienia ataku DNS amplification. Polega na ustawieniu odpowiedniej reguły na firewallu dotyczącej portu 53 na którym działa DNS. Przykładowe polecenie:  
 	```
 	iptables -A INPUT -p udp --dport 53 -m hashlimit \
 		--hashlimit-name DNS_LIMIT \
