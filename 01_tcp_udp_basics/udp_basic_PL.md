@@ -82,7 +82,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 		```
 		To ograniczenie uniemożliwia wysyłania wielu zapytań w krótkim czasie z jednego IP, uniemożliwiając atak DNS amplification. 
 - jak reagować: 
-	- w pierwszej kolejności należy odizolować urządzenie, które jest celem ataku (np przez fizyczne odłączenie od sieci),
+	- zablokować IP atakującego na firewall (`iptables -A INPUT -s IP -j DROP`), lub odizolować zaatakowane urządzenie, 
 	- następnie należy ustawić rate limiting oraz ograniczenie rekurencji DNS.
 
 ### NTP amplification
@@ -100,7 +100,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 		-j DROP
 		```
 - jak reagować: 
-	- odizolować zaatakowane urządzenie (np. fizycznie odłączyć od sieci),
+	- zablokować IP atakującego na firewall (`iptables -A INPUT -s IP -j DROP`), lub odizolować zaatakowane urządzenie, 
 	- ustawić rate limiting na firewall, 
 	- sprawdzić, czy tylko zaufane sieci mają dostęp do serwera, jeśli nie to ograniczyć dostęp, 
 	- wyłączyć (jeśli nie zostało wcześniej wyłączone) polecenie `monlist` na serwerze. 
@@ -116,3 +116,32 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 - ruch UDP na nietypowych portach (np. 4444/UDP),
 - serwer DNS odpowiada do wewnętrznego hosta, który o nic nie pytał. 
 
+## Case study
+Kontekst: Firma ma publiczny serwer DNS `ns1.firma.com` (IP 192.0.2.10). Pojawia się alert z monitoringu sieci :"nagły wzrost ruchu UDP na porcie 53". Fragment z tcpdump uruchomiony na serwerze: 
+```
+14:32:01.100 IP 203.0.113.50.54321 > 192.0.2.10.53: 12345+ [1au] ANY? google.com. (58)
+14:32:01.101 IP 203.0.113.50.54322 > 192.0.2.10.53: 12346+ [1au] ANY? google.com. (58)
+14:32:01.101 IP 203.0.113.50.54323 > 192.0.2.10.53: 12347+ [1au] ANY? google.com. (58)
+... (tysiące podobnych zapytań z 203.0.113.50) ....
+14:32:01.200 IP 192.0.2.10.53 > 198.51.100.10.12345: 12345 1/0/0 A 142.250.x.x (4096)
+14:32:01.201 IP 192.0.2.10.53 > 198.51.100.10.12346: 12346 1/0/0 A 142.250.x.x (4096)
+... (tysiące dużych odpowiedzi do 198.51.100.10) ...
+```
+Jednocześnie użytkownicy zgłaszają, że połączenie internetowe jest bardzo powolne.   
+
+Analiza: 
+- w przypadku tym nastąpił atak DNS amplification:
+	- atakujący o adresie IP 203.0.113.50 wysłał wiele zapytań do DNS o wszystkie rekordy google.com (ANY?), 
+	- 12345+ to ID transakcji, flaga plus na końcu oznacza, że rekurencja jest pożądana, 
+	- każde zapytanie miało wielkość 58 bajtów, wiec zapewne jedna linijka tekstu 
+	- atakujący użył IP spoofing by podszyć się pod adres IP ofiary  w tym przypadku 198.51.100.10,
+	- na każde zapytanie na adres ofiary przyszły duże odpowiedzi 4096 bajtów, wszystkie rekordy google.com,
+	- 1/0/0 oznacza 1 odpowiedź / 0 serwerów autorytatywnych /0 dodatkowych rekordów, 
+	- A 142.250.x.x to rekord A (adres IPv$) dla google.com.
+- dlaczego tak się stało:
+	- firewall - rate limiting jest nie ustawiony, nie ma żadnych ograniczeń zapytań, 
+	- na serwerze nie skonfigurowano ograniczeń zapytań rekurencyjnych do zakresu zaufanych źródeł, ani nie określono zaufanych sieci. 
+- co należy zrobić:
+	 - zablokować IP atakującego na firewall za pomocą polecenia `iptables -A INPUT -s 203.0.113.50 -j DROP`,
+	 - ustawić rate limiting dla UDP ogółem lub dla UDP na porcie 53, 
+	 - skonfigurować ograniczenie rekurencji DNS na serwerze, tak by tylko na zapytania z zaufanych adresów DNS odpowiadał. 
