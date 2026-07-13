@@ -42,7 +42,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 	- blokada podejrzanego IP,
 	- Rate limiting na firewallu, Ustalając rate limit na firewallu należy precyzyjnie określić port, dla którego są wprowadzane limity. Przykładowa reguła:
 	```
-	iptable -A INPUT -p udp -m hashlimit\
+	iptables -A INPUT -p udp -m hashlimit\
 		--hashlimit-name UDP_LIMIT \
 		--hashlimit-above 50/second \
 		--hashlimit-burst 100 \
@@ -55,7 +55,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 	- `-m hashlimit` - użyj modułu hashlimit (bardziej precyzyjny niż limit),
 	- `--hashlimit-name DNS_LIMIT` - nazwa każdej reguły musi być unikalna, 
 	- `--hashlimit-above 50` - jeśli pakietów z danego IP jest więcej niż 50 na sekundę. 
-	- `--hashlimit -burst 100` - dozwolony jest skok do 100 pakietów (np. na starcie zapytania),
+	- `--hashlimit-burst 100` - dozwolony jest skok do 100 pakietów (np. na starcie zapytania),
 	- `--hashlimit-mode srcip` - limit liczony dla każdego adresu źródłowego z osobna, 
 	- `-j DROP` - odrzuć nadmiarowe pakiety. 
 - jak reagować: 
@@ -63,7 +63,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 	- wprowadzić rate limiting dla UDP ogółem. 
 
 ### DNS amplification (wzmocnienie DNS)
-- co to jest: to atak, w którym atakujący wykorzystuje IP spoofing (podszywanie się pod IP ofiary). Atakujący wysyła małe zapytanie do DNS, wpisując w polu adres źródłowy adres IP ofiary. Choć zapytanie jest małe, odpowiedz może być ogromna, np gdy atakujący wysyła zapytanie o listę wszystkich rekordów dla danej domeny. Odpowiedz może mieć nawet kilka tysięcy bajtów. W wyniku takiego ataku ofiara jest zalewana ogromną ilością danych, co zapycha jej łączne internetowe i powoduje problemy z połączeniem. 
+- co to jest: to atak, w którym atakujący wykorzystuje IP spoofing (podszywanie się pod IP ofiary). Atakujący wysyła małe zapytanie do DNS, wpisując w polu adres źródłowy adres IP ofiary. Choć zapytanie jest małe, odpowiedz może być ogromna, np gdy atakujący wysyła zapytanie o listę wszystkich rekordów dla danej domeny. Odpowiedź może mieć nawet kilka tysięcy bajtów. W wyniku takiego ataku ofiara jest zalewana ogromną ilością danych, co zapycha jej łącze internetowe i powoduje problemy z połączeniem. 
 - dlaczego UDP: ponieważ UDP nie ma handshake, więc można sfałszować adres źródłowy (IP spoofing). TCP wymaga handshake więc taki atak nie jest możliwy, 
 - jak wykryć: duży ruch DNS z jednego źródła, odpowiedzi DNS bez odpowiadających im zapytań z sieci wewnętrznej. 
 - jak się chronić: 
@@ -75,7 +75,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 	```
 	iptables -A INPUT -p udp --dport 53 -m hashlimit \
 		--hashlimit-name DNS_LIMIT \
-		--hashlimit-above 1-/second \
+		--hashlimit-above 10/second \
 		--hashlimit-burst 20 \
 		--hashlimit-mode srcip \
 		-j DROP
@@ -88,7 +88,7 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 ### NTP amplification
 - co to jest: jest to atak typu DDoS, wykorzystujący serwery NTP (Network Time Protocol) do wzmacniania ruchu. Atakujący wysyła małe zapytanie do serwera NTP, podszywając się pod adres IP ofiary (IP spoofing), a serwer odpowiada dużym pakietem (np. zwraca listę ostatnich 600 klientów). Jest chętnie wykorzystywany przez atakujących ponieważ współczynnik amplifikacji (wzmocnienia) może być nawet kilkaset razy większy  niż w przypadku DNS. Efekt działania ataku jest taki sam jak DNS amplification -> zapchane łącze.
 - jak się chronić:
-	- wyłączenie polecenia `monlist` - to stare polecenie zwracające listw ostatnich kilkuset adresów IP, które się z nim łączyły. Obecnie zespoły Blue Team korzystają z nowszego i bezpieczniejszego polecenia `mru`, którego nie da się wykorzystać w ataku,
+	- wyłączenie polecenia `monlist` - to stare polecenie zwracające listę ostatnich kilkuset adresów IP, które się z nim łączyły. Obecnie zespoły Blue Team korzystają z nowszego i bezpieczniejszego polecenia `mru`, którego nie da się wykorzystać w ataku,
 	- ograniczenie dostępu do serwera - czyli ustawienie by serwer odpowiadał tylko na zapytania od zaufanych sieci, a nie z całego internetu. Ograniczenie to można wprowadzić za pomoca list kontroli dostępu (ACL) w pliku konfiguracyjnym ntp.conf, 
 	- rate limiting. Przykład:
 	```
@@ -96,11 +96,11 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 		--hashlimit-name NTP_LIMIT \
 		--hashlimit-above 5/second \
 		--hashlimit-burst 10 \
-		--haslklimit-mode srcip \
+		--hashlimit-mode srcip \
 		-j DROP
 		```
 - jak reagować: 
-	- odizolować zaatakowane urządzenie (np. fizycznie odłączyć od siecii),
+	- odizolować zaatakowane urządzenie (np. fizycznie odłączyć od sieci),
 	- ustawić rate limiting na firewall, 
 	- sprawdzić, czy tylko zaufane sieci mają dostęp do serwera, jeśli nie to ograniczyć dostęp, 
 	- wyłączyć (jeśli nie zostało wcześniej wyłączone) polecenie `monlist` na serwerze. 
@@ -111,8 +111,8 @@ Jeśli datagram zaginie - aplikacja albo sobie poradzi (np. poprosi o powtórzen
 - firewall nie widzi sesji - więc nie ma czego śledzić. 
 
 ## Przesłanki do podejrzenia ataku przez UDP
-- nagły wzrost ruchu IDP z jednego IP, 
-- duże odpowiedzi DNS.NTP bez odpowiadających zapytań,
+- nagły wzrost ruchu UDP z jednego IP, 
+- duże odpowiedzi DNS/NTP bez odpowiadających zapytań,
 - ruch UDP na nietypowych portach (np. 4444/UDP),
 - serwer DNS odpowiada do wewnętrznego hosta, który o nic nie pytał. 
 
