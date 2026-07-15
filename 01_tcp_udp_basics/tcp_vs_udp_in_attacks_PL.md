@@ -32,7 +32,7 @@ Te dwie cechy nie idą w parze, tu konieczne są kompromisy albo niezawodnie, al
 ### DDoS wolumetryczny (volumetric)
 To inny rodzaj ataku niż amplifikacja, jednak cel ataku jest podobny, wyczerpują zasoby ofiary. W tym ataku wysyłana jest ogromna ilość pakietów, które w sumie zapychają dostępne pasmo ofiary. 
 - TCP:
-	- źle skonfigurowany firewall, wyłączone SYN cookies, brak rate limiting, SYN proxy, brak szyfrowania, sprawia, że TCP jest wrażliwy na atak SYN flood, 
+	- źle skonfigurowany firewall, wyłączone SYN cookies, brak rate limiting, SYN proxy, sprawia, że TCP jest wrażliwy na atak SYN flood.
 - UDP:
 	- brak odpowiedniej konfiguracji, brak rate limiting, uwrażliwiają już protokół na ataki UDP flood. 
 
