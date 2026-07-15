@@ -10,7 +10,7 @@ Atakujący zwykle starannie wybiera protokół, ze względu na cele ataku oraz o
 Te dwie cechy nie idą w parze, tu konieczne są kompromisy albo niezawodnie, albo szybko. 
 - TCP: 
 	- gwarantuje niezawodność, wszystkie dane muszą dotrzeć do odbiorcy w odpowiedniej kolejności i bez duplikacji. Jednak ma zabezpieczenia: Handshake, kontrolę przeciążenia, retransmisję jeśli coś zaginie.
-	- nadaje się do ataków, w których trzeba mieć pewność ze dane dotarły do celu, np. reverse shell, C2, exfiltracja. Jednak to jest wolniejsze i łatwiejsze do śledzenia przez analityka - ponieważ jest stanowe.
+	- nadaje się do ataków, w których trzeba mieć pewność, że dane dotarły do celu, np. reverse shell, C2, exfiltracja. Jednak to jest wolniejsze i łatwiejsze do śledzenia przez analityka - ponieważ jest stanowe.
 - UDP: 
 	- szybki, bez gwarancji dostarczenia, bez pilnowania kolejności, bez kontroli przepływu, czyli po prostu "wyślij i zapomnij". 
 	- dobry do ataków tam gdzie liczy się szybkość i wolumen (objętość danych / Gbps), np: DDoS, amplification lub w przypadkach, w których atakujący chce uniknąć wykrycia - UDP jest bezstanowy, to jest trudniejsze do logowania.
@@ -18,7 +18,7 @@ Te dwie cechy nie idą w parze, tu konieczne są kompromisy albo niezawodnie, al
 ### Stanowość 
 - TCP:
 	- to protokół stanowy, serwer śledzi połączenia (SYN, ESTABLISHED, FIN). Blue Team może monitorować stan połączeń, gdyż atakujący musi utrzymywać stan, a to zwiększa jego ślad.
-	- protokół TCP jest wybierany w przypadku gdy atakujący chce się ukryć w normalnym ruchu, np: C2 przez HTTPS na porcie 443, który zawsze używa TCP. Taki atak nie rzuca się w oczy analitykowi. 
+	- protokół TCP jest wybierany w przypadku, gdy atakujący chce się ukryć w normalnym ruchu, np: C2 przez HTTPS na porcie 443, który zawsze używa TCP. Taki atak nie rzuca się w oczy analitykowi. 
 - UDP:
 	- to protokół bezstanowy, serwer nie śledzi połączeń UDP bo nie ma sesji. Każdy pakiet jest niezależny, a zespołowi Blue Team jest trudniej odróżnić normalny ruch od ataku. 
 	- atakujący wybiera ten protokół, kiedy chce ominąć firewalle stanowe, uważnie śledzące sesje TCP, lecz UDP traktują bardziej wyrozumiale. 
@@ -34,7 +34,7 @@ To inny rodzaj ataku niż amplifikacja, jednak cel ataku jest podobny, wyczerpuj
 - TCP:
 	- źle skonfigurowany firewall, wyłączone SYN cookies, brak rate limiting, SYN proxy, sprawia, że TCP jest wrażliwy na atak SYN flood.
 - UDP:
-	- brak odpowiedniej konfiguracji, brak rate limiting, uwrażliwiają już protokół na ataki UDP flood. 
+	- brak odpowiedniej konfiguracji, brak rate limiting, uwrażliwiają protokół na ataki UDP flood. 
 
 ### Omijanie Firewalla
 - TCP:
