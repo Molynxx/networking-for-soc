@@ -18,7 +18,7 @@ Jest to usługa tłumaczenia nazw domenowych na adresy IP i jest to jego jedyne 
 DNS nie jest po prostu jedną ogromną listą adresów i ich domen, jest podzielony na warstwy, aby rozłożyć obciążenie i odpowiedzialność.
 
 - `Root`:
-	- co to jest: to 13 głównych serwerów na świecie
+	- co to jest: to 13 głównych serwerów (klastrów) na świecie
 	- co wiedzą: wiedzą, gdzie są serwery TLD (.com, .pl, .org)
 	- przykład: pytanie do serwera: "kto obsługuje .com?"
 - `TLD`;
@@ -50,9 +50,7 @@ Gdy użytkownik wpisuje w pasku przeglądarki np. "google.com", zaczyna się ca�
 	- rola: pyta innych w imieniu użytkownika, nie zna odpowiedzi ale wie gdzie ich szukać, przechodzi przez całą hierarchię. To serwer dostawcy internetu lub publiczny (np. google 8.8.8.8)
 	- zawartość: cache - zapamiętuje odpowiedzi na czas TTL
 		- TTL (Time To Live) - to czas życia rekordu w sekundach, oznacza jak długo w będzie przechowywany adres IP dla domeny. W tym czasie resolver nie będzie pytał, tylko poda dane z pamięci cache. Po upływie tego czasu, resolver znów będzie przechodzić przez całą hierarchię. 
-			- Niskie TTL (60-300s) + dużo zapytań to możliwe: 
-				- DGA (Domain Generation Algorithm) - atak polega na utrudnieniu znalezienia nazwy domeny serwera C2. Malware na zainfekowanym urządzeniu generuje dużą ilość domen, ale tylko jedną z nich rejestruje atakujący. Za każdym razem malware pyta DNS o mnóstwo nieistniejących domen, DNS w odpowiedzi daje NXDOMAIN. Pojedyncza odpowiedź NXDOMAIN to normalny ruch, każdy może zrobić literówkę w nazwie domeny, jednak wiele takich odpowiedzi z jednego hosta przy niskim TTL wskazuje na DGA. Główną siła tego ataku - nawet jeśli uda się wykryć i zablokować domenę C2 to malware kolejnego dnia użyje innej wygenerowanej z algorytmu. Nie da się zablokować wszystkich, można albo złamać algorytm, albo zablokować cały ruch z zainfekowanego hosta, a następnie znaleźć i usunąć malware.
-				- Fast Flux - atakujący ma stałą domenę, lecz ma do dyspozycji wiele adresów IP (wiele zainfekowanych urządzeń). Kiedy zostanie zablokowany IP serwera C2 korzysta z innego. 
+			- Niskie TTL (60-300s) + wysoka częstotliwość zapytań może wskazywać na DGA lub Fast Flux (więcej w pliku `dns_in_attacks_PL.md`),
 			- Wysokie TTL (86400s) -> zmiana rekordu będzie długo niewidoczna. Np. w przypadku migracji serwera na inne IP, przez 24 h resolver będzie pamiętał poprzedni rekord (poprzednie IP), więc zamiast połączyć się z nowym adresem będzie łączył na nieaktualny adres. 
 - `Autorytatywny`:
 	- rola: ma wszystkie odpowiedzi na temat swojej domeny, nie musi nikogo pytać. Root i TLD to szczególne typy serwerów autorytatywnych
@@ -109,7 +107,7 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 ### Rekord AAAA (Address dla IPv6)
 - cel: tłumaczy nazwę na adres IPv6
 - przykład: example.com -> 2606:2800:220:1:248:1893:25c8:1946,
-- SOC: IPv6 jest rzadziej monitorowany. Malware czasem używa go by ominąć filtry, które sprawdzają tylko IPv4.
+- SOC: IPv6 jest rzadziej monitorowany. Malware czasem używa go żeby ominąć filtry, które sprawdzają tylko IPv4.
 
 ### Rekord CNAME (Canonical Name)
 - cel: alias - przekierowanie jednej nazwy na drugą, np. jeśli ktoś wpisze adres bez "www"
@@ -137,7 +135,7 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 	- DKIM: klucz publiczny do weryfikacji podpisów maili, 
 	- DMARC: polityka co zrobić z mailami, które nie przejdą SPF/DKIM
 	- weryfikacja domeny: Google, Microsoft każą dodać konkretny tekst żaby udowodnić, że użytkownik jest właścicielem domeny
-- SOC: DNS tunnelling - atakujący używają rekordów TXT do przesyłania danych. Wysyłają zapytanie TXT do domeny, którą kontrolują, a odpowiedz zawiera zakodowane dane. Normalne zapytanie TXT jest krótkie. Długie odpowiedzi TXT pow 200 znaków są podejrzane i wymagają sprawdzenia. Tak się właśnie zachowują złośliwe domeny, z własnym serwerem DNS -> mają zapisany rekord TXT tak aby zwierał zakodowane dane lub polecenia. W taki sposób atakujący obchodzą zabezpieczenia, np. firewall, który blokuje FTP, HTTP, gdy chcą przesłać sobie np. wykradzione dane z komputera ofiary. 
+- SOC: rekord TXT może być nadużywany do DNS tunnellingu (więcej w pliku dns_in_attacks_Pl.md). 
 
 ### Rekord SOA (Start Of Authority)
 - cel: znajdują się tu informacje administracyjne o strefie
