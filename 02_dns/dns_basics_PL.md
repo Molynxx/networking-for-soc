@@ -49,7 +49,7 @@ Gdy użytkownik wpisuje w pasku przeglądarki np. "google.com", zaczyna się ca�
 - `Resolver (rekursywny)`:
 	- rola: pyta innych w imieniu użytkownika, nie zna odpowiedzi ale wie gdzie ich szukać, przechodzi przez całą hierarchię. To serwer dostawcy internetu lub publiczny (np. google 8.8.8.8)
 	- zawartość: cache - zapamiętuje odpowiedzi na czas TTL
-		- TTL (Time To Live) - to czas życia rekordu w sekundach, oznacza jak długo  będzie przechowywany adres IP dla domeny. W tym czasie resolver nie będzie pytał, tylko poda dane z pamięci cache. Po upływie tego czasu, resolver znów będzie przechodzić przez całą hierarchię. 
+		- TTL (Time To Live) - to czas życia rekordu w sekundach, oznacza jak długo będzie przechowywany adres IP dla domeny. W tym czasie resolver nie będzie pytał, tylko poda dane z pamięci cache. Po upływie tego czasu, resolver znów będzie przechodzić przez całą hierarchię. 
 			- Niskie TTL (60-300s) + wysoka częstotliwość zapytań może wskazywać na DGA lub Fast Flux (więcej w pliku `dns_in_attacks_PL.md`),
 			- Wysokie TTL (86400s) -> zmiana rekordu będzie długo niewidoczna. Np. w przypadku migracji serwera na inne IP, przez 24 h resolver będzie pamiętał poprzedni rekord (poprzednie IP), więc zamiast połączyć się z nowym adresem będzie łączył na nieaktualny adres. 
 - `Autorytatywny`:
@@ -106,7 +106,7 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 
 ### Rekord AAAA (Address dla IPv6)
 - cel: tłumaczy nazwę na adres IPv6
-- przykład: example.com -> 2606:2800:220:1:248:1893:25c8:1946,
+- przykład: example.com -> 2606:2800:220:1:248:1893:25c8:1946
 - SOC: IPv6 jest rzadziej monitorowany. Malware czasem używa go, żeby ominąć filtry, które sprawdzają tylko IPv4.
 
 ### Rekord CNAME (Canonical Name)
@@ -162,7 +162,7 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 
 ### Rekord CAA (Certification Authority Authorization)
 - cel: określa, które CA mogą wydać certyfikat SSL dla domeny 
-- przykład: `example.com CAA 0 issue "letsencrypt.org`
+- przykład: `example.com CAA 0 issue "letsencrypt.org"`
 - SOC: atakujący sprawdzają CAA żeby znaleźć słabe punkty - jeśli domena nie ma CAA, mogą spróbować wygenerować certyfikat przez nieautoryzowane CA.
  
 ## DNS OVER HTTPS (DoH) i DNS OVER TLS (DoT)
@@ -193,7 +193,7 @@ To najpotężniejsze narzędzie, używane do debugowania i analizy DNS. Za pomoc
 - dig example.com MX -> zapytanie o serwery pocztowe
 - dig example.com ANY -> zapytanie o wszystkie rekordy
 - dig -x 93.184.216.34 -> reverse DNS
-- dig AXFR example,com @ns1 -> próba transferu strefy
+- dig AXFR example.com @ns1 -> próba transferu strefy
 - +short example.com -> tylko odpowiedź, bez dodatkowych informacji
 - dig example.com +trace -> pokazuje całą drogę zapytania DNS od roota, przez TLD do autorytatywnego (np. gdy zachodzi potrzeba prześledzenia pełnego łańcucha CNAME)
 
