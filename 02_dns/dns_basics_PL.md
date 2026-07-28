@@ -11,7 +11,7 @@ Jest to usługa tłumaczenia nazw domenowych na adresy IP i jest to jego jedyne 
 
 ## Dlaczego DNS jest ważny dla SOC
 - każde połączenie w internecie rozpoczyna się właśnie od tego protokołu działającego w warstwie aplikacji. Zanim host połączy się z serwerem, najpierw wysyła zapytanie do DNS o adres serwera, 
-- DNS jest często wykorzystywany przez atakujących do komunikacji C@, tunelowania danych, amplifikacji,
+- DNS jest często wykorzystywany przez atakujących do komunikacji C2, tunelowania danych, amplifikacji,
 - DNS jest też jednym z najważniejszych źródeł logów dla analityków SOC. Widząc anomalie w DNS, widzisz atak na bardzo wczesnym etapie.
 
 ## Hierarchia DNS 
@@ -27,7 +27,7 @@ DNS nie jest po prostu jedną ogromną listą adresów i ich domen, jest podziel
 	- przykład: .com wie gdzie jest google.com
 - `Autorytatywny`:
 	- co to jest: to serwer konkretnej domeny
-	- co wiedzą: znają wszystkie rekordy swojej domeny i pozdają konkretne IP, 
+	- co wiedzą: znają wszystkie rekordy swojej domeny i podają konkretne IP, 
 	- przykład: google.com wie, że www = 142.250.203.206
 - `Resolver (rekursywny)`:
 	- co to jest: serwer, który pyta w imieniu użytkownika
@@ -49,7 +49,7 @@ Gdy użytkownik wpisuje w pasku przeglądarki np. "google.com", zaczyna się ca�
 - `Resolver (rekursywny)`:
 	- rola: pyta innych w imieniu użytkownika, nie zna odpowiedzi ale wie gdzie ich szukać, przechodzi przez całą hierarchię. To serwer dostawcy internetu lub publiczny (np. google 8.8.8.8)
 	- zawartość: cache - zapamiętuje odpowiedzi na czas TTL
-		- TTL (Time To Live) - to czas życia rekordu w sekundach, oznacza jak długo w będzie przechowywany adres IP dla domeny. W tym czasie resolver nie będzie pytał, tylko poda dane z pamięci cache. Po upływie tego czasu, resolver znów będzie przechodzić przez całą hierarchię. 
+		- TTL (Time To Live) - to czas życia rekordu w sekundach, oznacza jak długo  będzie przechowywany adres IP dla domeny. W tym czasie resolver nie będzie pytał, tylko poda dane z pamięci cache. Po upływie tego czasu, resolver znów będzie przechodzić przez całą hierarchię. 
 			- Niskie TTL (60-300s) + wysoka częstotliwość zapytań może wskazywać na DGA lub Fast Flux (więcej w pliku `dns_in_attacks_PL.md`),
 			- Wysokie TTL (86400s) -> zmiana rekordu będzie długo niewidoczna. Np. w przypadku migracji serwera na inne IP, przez 24 h resolver będzie pamiętał poprzedni rekord (poprzednie IP), więc zamiast połączyć się z nowym adresem będzie łączył na nieaktualny adres. 
 - `Autorytatywny`:
@@ -59,7 +59,7 @@ Gdy użytkownik wpisuje w pasku przeglądarki np. "google.com", zaczyna się ca�
 ## Strefa DNS i transfer strefy
 
 ### Strefa DNS 
-Strefa to plik tekstowy na serwerze autorytatywnym, zawierającym wszystkie rekordy domeny.  
+Strefa to plik tekstowy na serwerze autorytatywnym, zawierający wszystkie rekordy domeny.  
 Żeby zrozumieć dobrze jak to działa, warto użyć przykładu: Administrator dużej firmy, ma jeden główny segregator (Primary Server DNS) z plikiem Strefa (np. dla domeny mojafirma.com). Co jeśli pierwszy segregator ulegnie zniszczeniu? Lub będzie tak często przeglądany przez wiele osób, że zrobi się gigantyczna kolejka? -> to powód dlaczego zawsze warto mieć kopię. To właśnie jest rola serwerów Primary (Master) i Secondary (Slave).
 - `Primary DNS`: to miejsce, w którym administrator może edytować dane, wprowadzać zmiany w pliku strefa. 
 - `Secondary DNS`: zawiera plik wyłącznie do odczytu, to jest kopia primary. Administrator nigdy nic na nim nie zmienia. Jego zadaniem jest pobrać kopię strefy od Primary i trzymać ją u siebie. Dzięki temu jest redundancja - czyli jeśli primary padnie, to Secondary odpowiada na pytania, 
@@ -76,7 +76,7 @@ Transfer może odbywać się na dwa sposoby:
 - Forward DNS - tłumaczy nazwę domeny na adres IP. Np. "Jaki jest adres example.com?" -> w odpowiedzi DNS podaje adres IP np. 93.184.216.34. To zapytanie występuje zawsze gdy użytkownik otwiera stronę. 
 - Reverse DNS - odwraca proces, tłumaczy adres IP na nazwę domeny, np "Jaka domena kryje się pod adresem 93.184.216.34?". Serwer odpowiada np. example.com. Reverse DNS jest używany do weryfikacji, do sprawdzenia czy IP jest rzeczywiście tym za kogo się podaje.  
 Przykład:  
-Jak to działa na poczcie mail, pomagając ocenić czy wiadomość, która przyszła jest spamem czy nie. Użytkownik dostaje maila z serwera 93.184.216.34. Serwer odbiorcy wykonuje kolejno:
+Jak to działa na poczcie mailowej, pomagając ocenić czy wiadomość, która przyszła jest spamem czy nie. Użytkownik dostaje maila z serwera 93.184.216.34. Serwer odbiorcy wykonuje kolejno:
 - Reverse DNS: "Jaka nazwa jest przypisana do IP 93.184.216.34?"
 - Odpowiedź: "mail.example.com"
 - Forward DNS: "Jaki IP ma mail.example.com"
@@ -102,7 +102,7 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 ### Rekord A (Address)
 - cel: tłumaczy nazwę na IPv4
 - Przykład: example.com -> 93.184.216.34
-- SOC: To najczęstszy typ zapytania, zupełnie normalny ruch. Podejrzane w przypadku gdy pojawia się bardzo dużo zapytań A do jednej domeny (może wskazywać na beaconing - malware na zainfekowanym urządzeniu regularnie (np co 60 lub 120 sekund) pyta o serwer C2).
+- SOC: To najczęstszy typ zapytania, zupełnie normalny ruch. Podejrzane w przypadku, gdy pojawia się bardzo dużo zapytań A do jednej domeny (może wskazywać na beaconing - malware na zainfekowanym urządzeniu regularnie (np. co 60 lub 120 sekund) pyta o serwer C2).
 
 ### Rekord AAAA (Address dla IPv6)
 - cel: tłumaczy nazwę na adres IPv6
@@ -112,16 +112,16 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 ### Rekord CNAME (Canonical Name)
 - cel: alias - przekierowanie jednej nazwy na drugą, np. jeśli ktoś wpisze adres bez "www"
 - przykład: example.com -> www.example.com
-- działanie: gdy użytkownik pyta o example.com, dostaje odpowiedz: "To jest alias dla www.example.com. Zapytaj jeszcze raz o www.example.com"
-- SOC: łańcuchy CNAME mogą być długie i prowadzić do ukrytych domen. Atakujący może mieć wiele domen i gdy jedna zostanie zablokowana, jego własny DNS mówi: "Nie szukaj mnie, po prostu idź pod ten adres". To alias dla złośliwej strony, który zapewnia  ciągłość jej działania. Dlatego też należy weryfikować gdzie ostatecznie prowadzi CNAME, np. za pomocą polecenia: `dig zły.link +trace`.
+- działanie: gdy użytkownik pyta o example.com, dostaje odpowiedź: "To jest alias dla www.example.com. Zapytaj jeszcze raz o www.example.com"
+- SOC: łańcuchy CNAME mogą być długie i prowadzić do ukrytych domen. Atakujący może mieć wiele domen i gdy jedna zostanie zablokowana, jego własny DNS mówi: "Nie szukaj mnie, po prostu idź pod ten adres". To alias dla złośliwej strony, który zapewnia ciągłość jej działania. Dlatego też należy weryfikować gdzie ostatecznie prowadzi CNAME, np. za pomocą polecenia: `dig zły.link +trace`.
 
 ### Rekord MX (Mail Exchanger)
 - cel: wskazuje serwer pocztowy domeny
 - przykład: example.com MX 10 mail.example.com (10 to priorytet serwera pocztowego - im niższa liczba, tym wyższy priorytet. Liczba ta mówi klientowi wysyłającemu maila, do którego serwera ma próbować dostarczyć wiadomość w pierwszej kolejności).
 - SOC: 
 	- host, który nigdy nie wysyła maili, a nagle wysyła zapytanie MX to zachowanie podejrzane (może przygotowywać phishing). Prawdopodobnie komputer został zainfekowany przez malware, które pyta o rekordy maila, np. banku ofiary. To pozwala mu poznać na jakich serwerach bank ma konta mailowe, co pozwala ocenić zabezpieczenia i dostosować mail phishingowy tak aby wyglądał na prawdziwą korespondencję z banku. 
-	- malware na ofiary zebrało wszystkie maile i kontakty z książki kontaktów ofiary, a teraz wysyła zapytanie MX, podczas wysyłania maila ze skradzionymi danymi na własny adres mailowy.   
-	- należy pamiętać, że sam komputer użytkownika nie wysyła maili bezpośrednio. Używa aplikacji (np. Outlook, przeglądarka), która łączy się z firmowym serwerem poczty. To serwer poczty a nie IP komputera użytkownika, pyta DNS o rekord MX adresata. Więc jeśli w logach pojawia się ze IP komputera użytkownika pyta o rekord MX to zawsze jest podejrzane i najprawdopodobniej to malware. 
+	- malware na komputerze ofiary zebrało wszystkie maile i kontakty z książki kontaktów ofiary, a teraz wysyła zapytanie MX, podczas wysyłania maila ze skradzionymi danymi na własny adres mailowy.   
+	- należy pamiętać, że sam komputer użytkownika nie wysyła maili bezpośrednio. Używa aplikacji (np. Outlook, przeglądarka), która łączy się z firmowym serwerem poczty. To serwer poczty a nie IP komputera użytkownika, pyta DNS o rekord MX adresata. Więc jeśli w logach pojawia się, że IP komputera użytkownika pyta o rekord MX to zawsze jest podejrzane i najprawdopodobniej to malware. 
 
 ### Rekord NS (Name Server)
 - cel: wskazuje serwery autorytatywne domeny
@@ -144,7 +144,7 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 	- Email administratora
 	- Numer seryjny (do synchronizacji primary-secondary)
 	- Timery: refresh, retry, expire, minimum TTL
-- SOC: SOA zdradza adres mailowy admina, więc atakujący może to wykorzystać do socjotechniki lub prób włamania się na konto admina. Warto więc upewnić się, że hasło jest bezpieczne a polityki haseł dobrze ustawione. 
+- SOC: SOA zdradza adres mailowy admina, więc atakujący może to wykorzystać do socjotechniki lub prób włamania się na konto admina. Warto więc upewnić się, że hasło jest bezpieczne, a polityki haseł dobrze ustawione. 
 
 ### Rekord PTR (Pointer)
 - cel: reverse DNS - IP->NAZWA (odwrotność A/AAAA)
@@ -158,7 +158,7 @@ Każda domena ma w swojej strefie różne rodzaje rekordów. To nie są wyłącz
 
 ### Rekord ANY
 - cel: żądanie wszystkich rekordów domeny na raz
-- SOC: normalny ruch prawie nigdy nie używa ANY. Zapytania ANY to z dużym prawdopodobieństwem amplifikacja DNS. Dlatego wielu administratorów wyłącza tę opcję na swoich serwerach DNS. Więc jeśli widać w logach zapytanie ANY to oznacza, albo dany DNS jest źle skonfigurowany, albo jest celowo ustawiony przez atakującego, by służył jako wzmacniacz w ataku DDoS.
+- SOC: normalny ruch prawie nigdy nie używa ANY. Zapytania ANY to są z dużym prawdopodobieństwem amplifikacja DNS. Dlatego wielu administratorów wyłącza tę opcję na swoich serwerach DNS. Więc jeśli widać w logach zapytanie ANY to oznacza, albo dany DNS jest źle skonfigurowany, albo jest celowo ustawiony przez atakującego, by służył jako wzmacniacz w ataku DDoS.
 
 ### Rekord CAA (Certification Authority Authorization)
 - cel: określa, które CA mogą wydać certyfikat SSL dla domeny 
@@ -188,7 +188,7 @@ DNS działa na porcie 53, nie ma szyfrowania, więc każdy może zobaczyć jakie
 ## Narzędzia DNS
 
 ### dig (Domain Information Groper)
-To najpotężniejsze narzędzie, używane do debugowania i analizy DNS. Za pomocą ręcznych zapytań do serwerów DNS można sprawdzić co dokładnie odpowiadają:
+To najpotężniejsze narzędzie, używane do debugowania i analizy DNS. Za pomocą ręcznych zapytań do serwerów DNS można sprawdzić co dokładnie odpowiada:
 - dig example.com A -> zapytanie o rekord A
 - dig example.com MX -> zapytanie o serwery pocztowe
 - dig example.com ANY -> zapytanie o wszystkie rekordy
@@ -196,7 +196,6 @@ To najpotężniejsze narzędzie, używane do debugowania i analizy DNS. Za pomoc
 - dig AXFR example,com @ns1 -> próba transferu strefy
 - +short example.com -> tylko odpowiedź, bez dodatkowych informacji
 - dig example.com +trace -> pokazuje całą drogę zapytania DNS od roota, przez TLD do autorytatywnego (np. gdy zachodzi potrzeba prześledzenia pełnego łańcucha CNAME)
-
 
 ### nslookup
 Proste narzędzie wbudowane w system (Windows, Linux) do ręcznego odpytywania serwerów DNS. Działa podobnie do polecenia dig, lecz jest mniej szczegółowe.
@@ -219,7 +218,7 @@ To proste konsolowe zapytanie do DNS. Jest bardzo proste, zwraca tylko najważni
 	- małe pakiety poniżej 100 bajtów
 	- regularne, przewidywalne wzorce
 	- ruch na porcie 53 UDP
-	- zapytania do popularnych domen (np. google.com, microsoft.com, itp)
+	- zapytania do popularnych domen (np. google.com, microsoft.com, itp.)
 - Podejrzany ruch DNS:
 	- duże pakiety w logach - DNS tunnelling
 	- długie odpowiedzi TXT - DNS tunnelling (dane w rekordzie TXT)
