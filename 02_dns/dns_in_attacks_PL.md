@@ -135,19 +135,19 @@ Symptomy wskazujące na potencjalny Cache poisoning:
 
 ### Jak się bronić
 - należy włączyć DNSSEC - dzięki czemu odpowiedzi są kryptograficznie podpisywane, 
-- Należy losować query ID oraz porty źródłowe - zabezpieczenie, które znacznie utrudnia poisoning. Na czym polega:
+- należy losować query ID oraz porty źródłowe - zabezpieczenie, które znacznie utrudnia poisoning. Na czym polega:
 	- query ID - to szesnastobitowy numer identyfikacyjny, który pozwala resolverowi dopasować odpowiedź do konkretnego zapytania. Jest umieszczany w nagłówku każdego zapytania i odpowiedzi DNS,
 	- port źródłowy - to numer portu, z którego jest wysyłane zapytanie (domyślnie 53) jednak resolvery mogą go losować. Serwer DNS wysyła odpowiedź na ten konkretny port.
 	- jak to działa:
-		- atakujący, który chce sfałszować odpowiedź DNS, musi trafić nie tylko we właściwy port ale także w poprawny Query ID zanim nadjedzie prawdziwa odpowiedź z serwera DNS, 
+		- atakujący, który chce sfałszować odpowiedź DNS, musi trafić nie tylko we właściwy port ale także w poprawny query ID zanim nadjedzie prawdziwa odpowiedź z serwera DNS, 
 		- bez losowania, jest to dość łatwe do odgadnięcia bo w starych, prymitywnych resolverach domyślny query ID to 12345 a domyślny port to 53. 
 		- z losowaniem to jest praktycznie niemożliwe. 
 		- jeśli odpowiedź przyjdzie na niewłaściwy port i lub z niewłaściwym query ID -> resolver odrzuca ją.    
-	Należy jednak zaznaczyć, że nowoczesne resolvery losują Query ID dla każdego zapytania, losują port źródłowy z szerokiego zakresu, używają losowości kryptograficznej.  
+	Należy jednak zaznaczyć, że nowoczesne resolvery losują query ID dla każdego zapytania, losują port źródłowy z szerokiego zakresu, używają losowości kryptograficznej.  
 - należy ograniczać ACL resolvera - tylko zaufane serwery mogą pytać resolver. ACL (Access Control List) to lista dozwolonych i zabronionych zapytań dla określonych użytkowników, adresów IP lub procesów. Np. serwer DNS odpowiada wyłącznie na zapytania użytkowników należących do określonej sieci, a zapytania innych są odrzucane, 
 - obowiązkowa systematyczna aktualizacja oprogramowania - wszelkie dziury w resolverze to główna droga ataków. 
 - ten atak może się udać tylko w przypadkach gdy:
-	- resolver jest stary - nie losuje qurey ID i portów, 
+	- resolver jest stary - nie losuje query ID i portów, 
 	- MitM - atakujący widzi zapytanie, więc nie musi zgadywać ID i portu, 
 	- DNSSEC jest wyłączone, 
 	- zła konfiguracja, np. zbyt wąski zakres portów. 
