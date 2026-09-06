@@ -193,7 +193,7 @@ To najpotężniejsze narzędzie, używane do debugowania i analizy DNS. Za pomoc
 - dig example.com MX -> zapytanie o serwery pocztowe
 - dig example.com ANY -> zapytanie o wszystkie rekordy
 - dig -x 93.184.216.34 -> reverse DNS
-- dig AXFR example.com @ns1 -> próba transferu strefy
+- dig AXFR example.cdcom @ns1 -> próba transferu strefy
 - +short example.com -> tylko odpowiedź, bez dodatkowych informacji
 - dig example.com +trace -> pokazuje całą drogę zapytania DNS od roota, przez TLD do autorytatywnego (np. gdy zachodzi potrzeba prześledzenia pełnego łańcucha CNAME)
 
