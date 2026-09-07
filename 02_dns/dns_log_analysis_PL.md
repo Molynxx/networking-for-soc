@@ -199,4 +199,4 @@ Analiza:
 	- sprawdzić IP w threat intelligence,
 	- sprawdzić ACL pod kątem zaufanych hostów i serwerów, 
 	- usunąć adres admina z rekordu SOA (jeśli został tam wpisany), 
-	- sprawdzić czy IP nie występowało już wcześniej w logach, 
+	- sprawdzić czy IP nie występowało już wcześniej w logach. 
