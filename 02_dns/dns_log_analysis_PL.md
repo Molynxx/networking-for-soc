@@ -26,7 +26,7 @@ Analiza:
 - co jest podejrzane: 
 	- zapytania z jednego hosta o jedną domenę w regularnych odstępach czasu, 
 	- nazwa subdomeny bardzo przypomina kodowanie base64, 
-- na co to wskazuje: atak DNS tunnelling, którego celem jest exfiltracja. Urządzenie 192.168.1.105 zostało zainfekowane, malware wysyła do resolvera atakującego fragmenty zaszyfrowanych za pomocą base64 danych. 
+- na co to wskazuje: atak DNS tunnelling, którego celem jest eksfiltracja. Urządzenie 192.168.1.105 zostało zainfekowane, malware wysyła do resolvera atakującego fragmenty zaszyfrowanych za pomocą base64 danych. 
 - co należy zrobić:
 	- odciąć zainfekowane urządzenie od sieci, 
 	- zablokować domenę na resolverze oraz IP na firewallu, 
@@ -57,7 +57,7 @@ Analiza:
 ```
 Analiza:  
 - co jest podejrzane: wiele zapytań o nieistniejące domeny z jednego hosta w krótkich odstępach czasu oraz końcowe powodzenie, 
-- na co to wskazuje: atak DGA - malware generuje wiele domen, atakujący zna ich listę i każdego dnia rejestruję tylko jedną z nich. Malware odpytuje kolejno domeny aż trafi na tą zarejestrowaną. Atak ma na celu utrzymanie komunikacji C2, bo nawet jeśli jednego dnia domena zostanie zablokowana - to drugiego dnia C2 jest już na innej domenie. 
+- na co to wskazuje: atak DGA - malware generuje wiele domen, atakujący zna ich listę i każdego dnia rejestruje tylko jedną z nich. Malware odpytuje kolejno domeny aż trafi na tę zarejestrowaną. Atak ma na celu utrzymanie komunikacji C2, bo nawet jeśli jednego dnia domena zostanie zablokowana - to drugiego dnia C2 jest już na innej domenie. 
 - co należy zrobić: 
 	- odciąć zainfekowany host od sieci,
 	- zablokować IP i domenę, 
@@ -65,7 +65,7 @@ Analiza:
 	- usunąć malware, 
 	- sprawdzić od kiedy trwa atak
 	- sprawdzić logi pod kątem eksfiltracji, jeśli nastąpiła to jakie dane wyciekły, 
-	- sprawdzić inne hosty w sieci, czy tylko któryś z nich nie generuje takie zapytania, 
+	- sprawdzić inne hosty w sieci, czy któryś z nich nie generuje takie zapytania, 
 	- ustalić, do czego malware zdążył uzyskać dostęp, jeśli połączył się z C2 mógł pobrać dodatkowe moduły. 
 
 ## Case study 3
@@ -87,7 +87,7 @@ Analiza:
 11:04:41 resolver -> 10.0.0.7: evil.com A 203.0.113.74 (TTL 60)
 ```
 Analiza:  
-- co jest podejrzane: jeden host pyta o tą samą domenę w odstępie 70 sekund, domena, o którą pyta ma inny adres IP przy każdej kolejnej odpowiedzi, TTL 60 to czerwona flaga - DNS przechowuje pamięć o domenie w cache tylko przez minutę, 
+- co jest podejrzane: jeden host pyta o tę samą domenę w odstępie 70 sekund, domena, o którą pyta ma inny adres IP przy każdej kolejnej odpowiedzi, TTL 60 to czerwona flaga - DNS przechowuje pamięć o domenie w cache tylko przez minutę, 
 - na co to wskazuje: atak Fast Flux celem utrzymania komunikacji C2 - atakujący posiada sieć zainfekowanych komputerów oraz jedną złośliwą domenę, na której znajduje się serwer C2. Co minutę domena jest podpinana na kolejne IP z botnetu atakującego. Dzięki temu nawet jeśli jeden adres IP zostanie zablokowany to ruch w kolejnej minucie idzie już przez inne IP. 
 - co należy zrobić: 
 	- odciąć zainfekowane urządzenie od sieci, 
@@ -110,38 +110,38 @@ Analiza:
 13:00:10 172.16.0.20 -> resolver: ANY? firma.pl
 13:00:11 resolver -> 172.16.0.20: odpowiedź ANY (duża >4000 bajtów)
 
-... powtarza się wielokrotnie z rożną częstotliwością ....
+... powtarza się wielokrotnie z różną częstotliwością ....
 ```
 Analiza:  
-- co jest podejrzane: jeden host wysyła wiele zapytań ANY (zapytanie o wszystkie rekordy - duża odpowiedź), z dużą częstotliwością. Rekord ANY nie jest używany w normalnych ruchu właśnie ze względu na wielkość odpowiedzi, zwykły użytkownik nie potrzebuje takich informacji. Samo pojawienie się tego rekordu w logach to czerwona flaga dla SOC, 
+- co jest podejrzane: jeden host wysyła wiele zapytań ANY (zapytanie o wszystkie rekordy - duża odpowiedź) z dużą częstotliwością. Rekord ANY nie jest używany w normalnych ruchu właśnie ze względu na wielkość odpowiedzi, zwykły użytkownik nie potrzebuje takich informacji. Samo pojawienie się tego rekordu w logach to czerwona flaga dla SOC, 
 - na co to wskazuje: DNS amplification - atakujący wysyła zapytanie ANY fałszując adres źródłowy, więc duża odpowiedź idzie do ofiary a nie do atakującego. Celem tego ataku jest zablokowanie ruchu na komputerze ofiary lub usługi online - DDoS. 
 - co należy zrobić:
 	- jeśli to komputer w sieci wewnętrznej - odciąć go od sieci. Należy jednak pamiętać, że resolver może zostać użyty do ataku na zewnętrznych adresach IP, 
 	- sprawdzić czy na resolverze jest ustawiony ACL, 
-	- sprawdzić czy resolver ma wyłączoną rekurencję dla niezaufanych hostów, 
+	- sprawdzić czy resolver ma wyłączoną rekurencję dla zewnętrznych hostów, 
 	- ustawić rate limiting (ograniczyć ilość zapytań z jednego hosta w określonym oknie czasowym), 
-	- zablokować możliwość wysyłania zapytać ANY w konfiguracji DNS.
+	- zablokować możliwość wysyłania zapytań ANY w konfiguracji DNS.
 
 ## Case study 5
 - fragment logów:
 ```
 07:30:00 192.168.1.50 -> resolver: TXT? evil.com
-07:30:01 resolver -> 192.168.1.50: TXT odpowiedźL "b3BlbmFpZA=="
+07:30:01 resolver -> 192.168.1.50: TXT odpowiedź: "b3BlbmFpZA=="
 
 07:35:00 192.168.1.50 -> resolver: TXT? evil.com
-07:35:01 resolver -> 192.168.1.50: TXT odpowiedźL "c3RvcA=="
+07:35:01 resolver -> 192.168.1.50: TXT odpowiedź: "c3RvcA=="
 
 07:40:00 192.168.1.50 -> resolver: TXT? evil.com
-07:40:01 resolver -> 192.168.1.50: TXT odpowiedźL "d3l5bGlq"
+07:40:01 resolver -> 192.168.1.50: TXT odpowiedź: "d3l5bGlq"
 ```
 Analiza:  
 - co jest podejrzane: jeden host co 5 minut odpytuje o rekord TXT tą samą domenę, a odpowiedz przychodzi w postaci danych zaszyfrowanych za pomocą base64. 
-- na co to wskazuje: DNS tunnelling, którego celem jest komunikacja C2. Host pyta domenę o rekord TXT, którzy może przechowywać dowolne dane. W tym przypadku TXT zawiera krótkie, zaszyfrowane komunikaty przeznaczone dla malware od atakującego. W taki sposób atakujący może sterować malware na urządzeniu (wydawać mu polecenia np. stop, wyślij, itp). 
+- na co to wskazuje: DNS tunnelling, którego celem jest komunikacja C2. Host pyta domenę o rekord TXT, który może przechowywać dowolne dane. W tym przypadku TXT zawiera krótkie, zaszyfrowane komunikaty przeznaczone dla malware od atakującego. W taki sposób atakujący może sterować malware na urządzeniu (wydawać mu polecenia np. stop, wyślij, itp). 
 - co należy zrobić: 
 	- odciąć zainfekowane urządzenie od sieci, 
 	- zablokować domenę, 
 	- sprawdzić domenę w threat intelligence, 
-	- odszyfrować odpowiedzi TXT, by dowiedzieć się jakie polecenia wykonało malware, 
+	- odkodować odpowiedzi TXT, by dowiedzieć się jakie polecenia wykonało malware, 
 	- sprawdzić logi pod kątem eksfiltracji, a jeśli wystąpiła ustalić co wyciekło, 
 	- sprawdzić od kiedy trwa atak, 
 	- sprawdzić czy inne hosty z sieci nie mają podobnych zdarzeń w logach. 
@@ -159,8 +159,8 @@ Analiza:
 09:20:05 resolver -> 192.168.1.77: A bank.pl = 198.51.100.150  
 ```
 Analiza:  
-- co jest podejrzane: adres IP domeny bank.pl zmienił się nagle. 
-- na co to wskazuje: Cache poisoning - atakujący (MinM) zobaczył zapytanie od IP bank.pl, wysłał wysłał odpowiedź ze sfałszowanym adresem IP zanim nadeszła prawdziwa odpowiedź. Resolver ją przyjął i zapisał w cache na czas TTL określony w fałszywej odpowiedzi. Zwykle w takich przypadkach TTL jest długi, a to powinno natychmiast budzić podejrzenia. Przez czas TTL resolver będzie odpowiadał każdemu hostowi, który zapyta o bank.pl z cache podając fałszywy adres (złośliwej domeny). 
+- co jest podejrzane: adres domeny bank.pl zmienił się nagle. 
+- na co to wskazuje: Cache poisoning - atakujący (MitM) zobaczył zapytanie od IP bank.pl, wysłał odpowiedź ze sfałszowanym adresem IP zanim nadeszła prawdziwa odpowiedź. Resolver ją przyjął i zapisał w cache na czas TTL określony w fałszywej odpowiedzi. Zwykle w takich przypadkach TTL jest długi, a to powinno natychmiast budzić podejrzenia. Przez czas TTL resolver będzie odpowiadał każdemu hostowi, który zapyta o bank.pl z cache podając fałszywy adres (złośliwego serwera). 
 - co należy zrobić: 
 	- niezwłocznie zablokować IP,
 	- wyczyścić cache DNS lub zrestartować usługę, 
@@ -182,7 +182,7 @@ Analiza:
 12:00:31 resolver -> 10.0.0.15: SOA firma.pl = ns1.firma.pl admin@firma.pl
 
 12:01:00 10.0.0.15 -> resolver: SRV? _ldap._tcp.firma.pl
-12:01:01 resolver -> 10.0.0.15: SRV _ldap._tcp.firma.pl = dc1.firma.pl:339
+12:01:01 resolver -> 10.0.0.15: SRV _ldap._tcp.firma.pl = dc1.firma.pl:389
 
 12:00:00 10.0.0.15 -> resolver: AXFR? firma.pl
 12:00:01 resolver -> 10.0.0.15: REFUSED
@@ -192,8 +192,8 @@ Analiza:
 	- MX - zapytanie o serwer poczty, zwykłe hosty nigdy o to nie pytają, pyta o to serwer pocztowy, 
 	- SOA - zwykle nikomu taka informacja nie jest potrzebna, jeśli więc widnieje w logach jest to podejrzane, 
 	- SRV - zapytanie o identyfikator domeny, to również nie jest zapytanie zwykłego użytkownika. 
-	- AXFR - ktoś próbował poprać całą strefę - próba zakończyła się niepowodzeniem, ponieważ a ACL jest wyłączona opcja pobierania całej strefy dla serwerów innych niż zaufane, jednak ten rekord w logach zawsze jest sygnałem, że ktoś grzebie, 
-- na co to wskazuje: DNS reconnaissance - to atak polegający na rozpoznaniu, atakujący w ten sposób może przygotować się przed dalszym ataku (np. phishing), 
+	- AXFR - ktoś próbował pobrać całą strefę - próba zakończyła się niepowodzeniem, ponieważ ACL blokuje opcję pobierania całej strefy dla serwerów innych niż zaufane, jednak ten rekord w logach zawsze jest sygnałem, że ktoś grzebie, 
+- na co to wskazuje: DNS reconnaissance - to atak polegający na rozpoznaniu, atakujący w ten sposób może przygotować się przed dalszym atakiem (np. phishing), 
 - co należy zrobić:
 	- zablokować IP, 
 	- sprawdzić IP w threat intelligence,
