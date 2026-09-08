@@ -65,7 +65,7 @@ Analiza:
 	- usunąć malware, 
 	- sprawdzić od kiedy trwa atak
 	- sprawdzić logi pod kątem eksfiltracji, jeśli nastąpiła to jakie dane wyciekły, 
-	- sprawdzić inne hosty w sieci, czy któryś z nich nie generuje takie zapytania, 
+	- sprawdzić inne hosty w sieci, czy któryś z nich nie generuje takich samych zapytań, 
 	- ustalić, do czego malware zdążył uzyskać dostęp, jeśli połączył się z C2 mógł pobrać dodatkowe moduły. 
 
 ## Case study 3
@@ -135,7 +135,7 @@ Analiza:
 07:40:01 resolver -> 192.168.1.50: TXT odpowiedź: "d3l5bGlq"
 ```
 Analiza:  
-- co jest podejrzane: jeden host co 5 minut odpytuje o rekord TXT tą samą domenę, a odpowiedz przychodzi w postaci danych zaszyfrowanych za pomocą base64. 
+- co jest podejrzane: jeden host co 5 minut odpytuje o rekord TXT tą samą domenę, a odpowiedź przychodzi w postaci danych zaszyfrowanych za pomocą base64. 
 - na co to wskazuje: DNS tunnelling, którego celem jest komunikacja C2. Host pyta domenę o rekord TXT, który może przechowywać dowolne dane. W tym przypadku TXT zawiera krótkie, zaszyfrowane komunikaty przeznaczone dla malware od atakującego. W taki sposób atakujący może sterować malware na urządzeniu (wydawać mu polecenia np. stop, wyślij, itp). 
 - co należy zrobić: 
 	- odciąć zainfekowane urządzenie od sieci, 
