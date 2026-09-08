@@ -168,7 +168,7 @@ Analiza:
 		- DNSSEC, 
 		- losowanie query ID i portów (jeśli reslover jest stary, nowoczesne mają to ustawione domyślnie), 
 		- ACL - czy jest ustawione, 
-		- TTL jaki czas jest ustawiony dla tej domeny,
+		- jaki czas TTL jest ustawiony dla tej domeny,
 	- sprawdzić czy inne hosty dostały fałszywy adres domeny, czy któryś łączył się z tym IP, 
 	- pamiętać o aktualizacji resolvera. 
 
