@@ -28,7 +28,7 @@ QUIC łączy transport i szyfrowanie w jednym procesie.
 ### QUIC Flood
 - co to jest: to zalewanie serwera ogromną ilością pakietów QUIC, 
 - cel: DDoS, 
-- jak działa: atakujący wysyła duże ilości pakietów na serwer ofiary, ponieważ QUIC działa na UDP a UDP jest bezstanowy, serwer nie wiem czy te pakiety przychodzą od zwykłego użytkownika czy od atakującego. Każdy pakiet QUIC wymaga od serwera: parsowania, sprawdzania, odpowiadania, więc przy dużej ilości pakietów serwer zużywa CPU, pamięć oraz łącze, 
+- jak działa: atakujący wysyła duże ilości pakietów na serwer ofiary, ponieważ QUIC działa na UDP a UDP jest bezstanowy, serwer nie wie czy te pakiety przychodzą od zwykłego użytkownika czy od atakującego. Każdy pakiet QUIC wymaga od serwera: parsowania, sprawdzania, odpowiadania, więc przy dużej ilości pakietów serwer zużywa CPU, pamięć oraz łącze, 
 - jak wykryć: 
 	- widoczny wzrost ruchu UDP na porcie 443, 
 	- duża liczba pakietów z jednego IP, 
@@ -128,7 +128,7 @@ QUIC łączy transport i szyfrowanie w jednym procesie.
 ## QUIC w praktyce SOC
 
 ### Co jest widoczne w ruchu QUIC
-QUIC to szyfrowany protokół, jednak są dane, które na są zaszyfrowane: 
+QUIC to szyfrowany protokół, jednak są dane, które nie są zaszyfrowane: 
 - w pierwszym pakiecie (initial packet), który jest najbardziej czytelny, żeby serwer mógł rozpocząć handshake widać:
 	- SNI - nazwa domeny (np. google.com),
 	- ALPN - protokół aplikacyjny (np h3 dla HTTP/3), 
