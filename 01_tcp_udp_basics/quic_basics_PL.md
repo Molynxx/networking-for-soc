@@ -15,7 +15,7 @@ QUIC powstał właśnie po to żeby te problemy rozwiązać. W jednym połączen
 Jeśli jeden pakiet w strumieniu 1 się zgubi, pozostałe działają dalej. QUIC sam dba o potwierdzenia (ACK), retransmisje, kolejność w strumieniach. 
 
 ## Handshake w QUIC
-QUIC łączu transport i szyfrowanie w jednym procesie. 
+QUIC łączy transport i szyfrowanie w jednym procesie. 
 - Pierwsze połączenie (1 RTT):
 	- klient wysyła `ClientHello` z propozycją kluczy, 
 	- Serwer odpowiada `ServerHello` i ustala klucze, 
@@ -26,7 +26,7 @@ QUIC łączu transport i szyfrowanie w jednym procesie.
 ## Ataki na QUIC
 
 ### QUIC Flood
-- co to jest: to zalewanie serwera ogromną ilością paktów QUIC, 
+- co to jest: to zalewanie serwera ogromną ilością pakietów QUIC, 
 - cel: DDoS, 
 - jak działa: atakujący wysyła duże ilości pakietów na serwer ofiary, ponieważ QUIC działa na UDP a UDP jest bezstanowy, serwer nie wiem czy te pakiety przychodzą od zwykłego użytkownika czy od atakującego. Każdy pakiet QUIC wymaga od serwera: parsowania, sprawdzania, odpowiadania, więc przy dużej ilości pakietów serwer zużywa CPU, pamięć oraz łącze, 
 - jak wykryć: 
@@ -35,13 +35,13 @@ QUIC łączu transport i szyfrowanie w jednym procesie.
 	- wzrost zużycia CPU na serwerze, co oznacza, że serwer bardzo intensywnie pracuje, 
 	- spadek responsywności usługi.
 - jak się bronić: 
-	- rate limitig na UDP 443 - ograniczy ilość połączeń z jednego IP, 
+	- rate limiting na UDP 443 - ograniczy ilość połączeń z jednego IP, 
 	- filtrowanie pakietów QUIC na firewall - nowoczesne firewalle umieją śledzić połączenia QUIC, dzięki czemu mogą sprawdzać czy ruch jest normalny (np. czy pochodzi od prawdziwego klienta). Dodatkowo mogą blokować podejrzane wzorce. 
-	- usługi anty-DDos (np. Cloudflare, Akamai) - to usługi lub urządzenia stojące przed serwerem, które mogą:
+	- usługi anty-DDoS (np. Cloudflare, Akamai) - to usługi lub urządzenia stojące przed serwerem, które mogą:
 		- absorbować ruch - wytrzymują ogromne ataki, które zabiłyby przeciętny serwer, 
 		- używać testów "retry" - gdy wykryją podejrzane zapytanie, mogą wysłać do klienta specjalne wyzwanie "retry". Prawdziwy klient (np. przeglądarka) odpowie na wyzwanie, a atakujący nie odpowie. Dzięki temu usługa może wykryć fałszywy ruch i go odrzucić,
 		- analizować zachowanie - używają uczenia maszynowego do odróżniania prawdziwych użytkowników od atakujących na podstawie ich zachowania, 
-		- stosować limitowanie (rate limitiing). 
+		- stosować limitowanie (rate limiting). 
 
 ### 0-RTT Replay
 - co to jest: to atak polegający na wysłaniu przechwyconego pierwszego pakietu QUIC (0-RTT), 
@@ -55,10 +55,10 @@ QUIC łączu transport i szyfrowanie w jednym procesie.
 	- ustawienie konfiguracji serwera tak żeby akceptował 0-RTT tylko dla żądań idempotentnych (np. GET) - czyli dla operacji, które można bezpiecznie powtarzać. Nie dla operacji zmieniających stan jak np. POST, PUT, DELETE, 
 	- ustawienie w konfiguracji serwera jednorazowych tokenów - serwer wymaga unikalnego tokenu, który może być użyty tylko raz, 
 	- ustawienie na serwerze krótkiego czasu ważności 0-RTT - czyli 0 RTT jest akceptowane tylko przez kilka sekund od pierwszego żądania, 
-	ustawienie na serwerze szyfrowania metadanych - dodatkowe dane są szyfrowane i weryfikowane, a jakakolwiek zmiana ich przez atakującego powoduje odrzucenie zapytania. 
+	- ustawienie na serwerze szyfrowania metadanych - dodatkowe dane są szyfrowane i weryfikowane, a jakakolwiek zmiana ich przez atakującego powoduje odrzucenie zapytania. 
 
 ### Connection ID Spoofing 
-- co to jest: to podszywania się pod cudze połączenie QUIC, 
+- co to jest: to podszywanie się pod cudze połączenie QUIC, 
 - cel: przechwycenie sesji, wstrzyknięcie danych, zakłócenie komunikacji, 
 - jak działa: 
 	- klient i serwer nawiązują połączenie QUIC, 
@@ -70,14 +70,14 @@ QUIC łączu transport i szyfrowanie w jednym procesie.
 	- serwer, widząc znany ID, może pomyśleć, że to dalsza część sesji klienta, 
 	- jeśli atakującemu się uda, może wstrzykiwać dane lub przechwycić ruch, 
 - jak wykryć: 
-	- Jeśli w logach widać pakiety z niepasującym Connection ID (rożne ID w tej samej sesji), oznacza, że ktoś próbuje odgadnąć Connection ID by przejąć sesje, 
+	- Jeśli w logach widać pakiety z niepasującym Connection ID (różne ID w tej samej sesji), oznacza, że ktoś próbuje odgadnąć Connection ID by przejąć sesje, 
 	- dwa różne IP używają tego samego Connection ID jednocześnie:
 		- normalnie w sesji występuje IP klienta, oraz identyfikator sesji (np. 192.168.1.10 i abc123), 
 		- jeśli w logach widać np. 108.51.100.20 i abc123 to może oznaczać, że atakującemu udało się dostać do sesji, 
-		- UWAGA: zmiana IP nie zawsze oznacza, że atakujący jest w sesji, QUIC wspiera utrzymanie połączenia w przypadku zmiany sieci np. WiFi -> LTE, 
+		- UWAGA: zmiana IP nie zawsze oznacza, że atakujący jest w sesji, QUIC wspiera utrzymanie połączenia w przypadku zmiany sieci np. Wi-Fi -> LTE, 
 	- jedno Connection ID pojawia się z wielu IP w krótkim czasie powinno wzbudzać podejrzenia, 
 - jak się bronić:
-	- konfiguracja serwer:
+	- konfiguracja serwera:
 		- serwer ma generować losowe, długie Connection ID, 
 		- serwer ma rotować Connection ID w trakcie trwania sesji, co utrudnia odgadnięcie, 
 		- serwer ma szyfrować Connection ID, żeby podsłuchujący nie mógł go odczytać, 
@@ -120,15 +120,15 @@ QUIC łączu transport i szyfrowanie w jednym procesie.
 	- IP, które nie wysyłało zapytań, 
 - jak się bronić: 
 	- serwery QUIC mają wbudowany mechanizm obrony `anti-amplification limit (3x)` - oznacza to, że serwer nie może wysłać odpowiedzi większej niż 3x zapytanie, które dostał. Ta opcja domyślnie jest włączona, nie należy jej wyłączać, 
-	- `retry / Address Validation` - w konfiguracji serwera powinno być ustawione `retry=true`, `RequireAddressValidation` (quic-go). Przy takiej konfiguracji serwer będzie wysyłać pakiet Retry z tokenem, który klient musi odesłać w kolejnym pakiecie initial. Jeśli tego nie zrobi - handshake się nie powiedzie, 
-	- `Flow control` (max data) - to konfiguracja TLS na serwerze, którą ustawia się podczas jego konfiguracji. Określają ile danych może przesłać klient/serwer na starcie, 
+	- `retry / Address Validation` - w konfiguracji serwera powinno być ustawione `retry=true` oraz `RequireAddressValidation` (quic-go). Przy takiej konfiguracji serwer będzie wysyłać pakiet Retry z tokenem, który klient musi odesłać w kolejnym pakiecie initial. Jeśli tego nie zrobi - handshake się nie powiedzie, 
+	- `Flow control` (max data) - konfiguracja QUIC na serwerze, którą ustawia się podczas jego konfiguracji. Określają ile danych może przesłać klient/serwer na starcie, 
 	- `rate limiting` - konfiguracja na firewallu, pozwala ustalić limity połączeń serwera z jednym IP w określonym oknie czasowym, 
 	- `Anti-Spoofing` - konfigurowany na firewall - wykrywa i blokuje pakiety ze sfałszowanym adresem źródłowym IP.
 
 ## QUIC w praktyce SOC
 
 ### Co jest widoczne w ruchu QUIC
-QUIC to szyfrowany protokół, jednak są dane które na są zaszyfrowane: 
+QUIC to szyfrowany protokół, jednak są dane, które na są zaszyfrowane: 
 - w pierwszym pakiecie (initial packet), który jest najbardziej czytelny, żeby serwer mógł rozpocząć handshake widać:
 	- SNI - nazwa domeny (np. google.com),
 	- ALPN - protokół aplikacyjny (np h3 dla HTTP/3), 
@@ -173,7 +173,7 @@ Dlatego też w logach QUIC można zobaczyć połączenie, nawet jeśli UDP tego 
 - QUIC warto blokować gdy:
 	- nie ma narzędzi do analizy QUIC, 
 	- WAF/proxy nie obsługuje HTTP/3, 
-	- zachodzi konieczność by cały ruch był widoczny (DLP, inspekcja),
+	- zachodzi konieczność, by cały ruch był widoczny (DLP, inspekcja),
 	- pożądane jest wymuszenie ruchu przez TCP, który łatwiej kontrolować.
 	Blokada QUIC powoduje, że przeglądarki wracają do HTTP/2 po TCP.
 - Kiedy nie blokować QUIC:
