@@ -22,7 +22,7 @@ Działanie tego protokołu opiera się na żądaniach i odpowiedziach -> klient 
 	- nie używa już TCP, korzysta z QUIC, 
 	- QUIC to protokół korzystający z UDP, 
 	- problem Head-of-line blocking nie występuje, 
-	- jest szyfrowany od samego początki, 
+	- jest szyfrowany od samego początku, 
 	- szybki handshake (0-1 RTT),    
 	Jednak jest znacznie trudniejszy do monitorowania, ponieważ SNI widoczne jest tylko w Initial Packet, a żeby móc go monitorować potrzebne jest odpowiednie oprogramowanie, np. Zeek, Suricata lub proxy.
 
@@ -77,7 +77,7 @@ Podobnie jak GET, jednak serwer zwraca tylko nagłówki, nie zwraca treści.
 
 ### CONNECT
 - co przekazuje: klient prosi serwer o utworzenie tunelu do innego miejsca, używane głównie przez proxy. 
-- SOC: może służyć do nadużywania tunelowania. Taki ruch jest normalny gdy firma ma proxy lub przeglądarka chce połączyć się przez proxy. Jednak CONNECT dla nietypowych portów (nie 443), dla podejrzanych domen, dużo CONNECT z jednego IP lub CONNECT poza godzinami pracy powinno budzić podejrzenia. To może bowiem oznaczać że atakujący może przez CONNECT ukryć ruch C2.
+- SOC: może służyć do nadużywania tunelowania. Taki ruch jest normalny gdy firma ma proxy lub przeglądarka chce połączyć się przez proxy. Jednak CONNECT dla nietypowych portów (nie 443), dla podejrzanych domen, dużo CONNECT z jednego IP lub CONNECT poza godzinami pracy powinno budzić podejrzenia. To może bowiem oznaczać, że atakujący może przez CONNECT ukryć ruch C2.
 
 ## Kody odpowiedzi HTTP
 To język, którym posługuje się serwer z klientem. Gdy klient prosi o stronę, serwer odsyła nie tylko treść, ale też trzycyfrowy kod, który mówi co się stało z żądaniem. Przykład: Jeśli wpisujesz w przeglądarkę google.com - serwer odsyła 200 -> "mam tę stronę, oto ona". Pierwsza cyfra określa, do jakiej kategorii należy odpowiedź. 
@@ -97,10 +97,10 @@ To język, którym posługuje się serwer z klientem. Gdy klient prosi o stronę
 		- 404 Not Found - to informacja od serwera, że zasób nie istnieje. Np. po wpisaniu przez klienta nieprawidłowego adresu, 
 		- 405 Method Not Allowed - zabroniona metoda, np. w przypadku gdy klient próbuje wysłać POST tam gdzie jest dozwolony tylko GET.  
 	- 5xx - błąd serwera - serwer informuje, że problem leży po jego stronie.
-		- 500 Internal Server Error - to informacja o ogólnym błędzie serwera, np gdy skrypt na serwerze się wysypał, 
-		- 502 Bad Gateway - informacja, że pośrednik otrzymał złą odpowiedz, no gdy reverse proxy nie dogadał się z backendem, 
+		- 500 Internal Server Error - to informacja o ogólnym błędzie serwera, np. gdy skrypt na serwerze się wysypał, 
+		- 502 Bad Gateway - informacja, że pośrednik otrzymał złą odpowiedz, np. gdy reverse proxy nie dogadał się z backendem, 
 		- 503 Service Unavailable - to informacja, że serwer chwilowo nie działa, np. podczas konserwacji lub przeciążenia, 
-		- 504 Gateway Timeout - oznacza pośrednik nie doczekał się odpowiedzi, np gdy backend odpowiada zbyt wolno. 
+		- 504 Gateway Timeout - oznacza pośrednik nie doczekał się odpowiedzi, np. gdy backend odpowiada zbyt wolno. 
 
 ## Nagłówki HTTP
 Nagłówki to rodzaj metadanych, zawierają dodatkowe informacje, które lecą razem z żądaniem/odpowiedzią, nie z treścią strony.	
