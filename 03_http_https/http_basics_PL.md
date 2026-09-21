@@ -83,7 +83,7 @@ Podobnie jak GET, jednak serwer zwraca tylko nagłówki, nie zwraca treści.
 To język, którym posługuje się serwer z klientem. Gdy klient prosi o stronę, serwer odsyła nie tylko treść, ale też trzycyfrowy kod, który mówi co się stało z żądaniem. Przykład: Jeśli wpisujesz w przeglądarkę google.com - serwer odsyła 200 -> "mam tę stronę, oto ona". Pierwsza cyfra określa, do jakiej kategorii należy odpowiedź. 
 - Kategorie
 	- 2xx - sukces - serwer otrzymał, zrozumiał i wykonał żądanie. 
-		- 200 OK - to standardowy kod sukcesu, serwer zwraca to o co poprosił klient, np. może przeglądać google.com, 
+		- 200 OK - to standardowy kod sukcesu, serwer zwraca to o co poprosił klient, np. można przeglądać google.com, 
 		- 201 Created - oznacza, że serwer coś utworzył. Np. gdy zakładasz konto, serwer potwierdza, że zostało utworzone, 
 		- 204 No Content - oznacza sukces, lecz serwer nie zwraca niczego. Np. serwer odpowiada "OK" po przyjęciu formularza, nic nie odsyła nowej strony. 
 	- 3xx - przekierowanie - serwer mówi, że należy przejść gdzie indziej.
@@ -113,8 +113,8 @@ Nagłówki to rodzaj metadanych, zawierają dodatkowe informacje, które lecą r
 	- X-Forwarded-For - informuje, jakie było oryginalne IP klienta (jeśli jest proxy), np. `X-Forwarded-For: 203.0.111.12`.
 - Nagłówki odpowiedzi (serwer -> klient):
 	- Server - mówi, jakie oprogramowanie działa na serwerze, np. `Server: nginx`, 
-	- Content-Type - to informacja, jaki typ treści serwer zawiera, np. `Content-type: text/html`, 
-	- Content-length - informuje, jak długa jest treść, np. `Content-Length: 1234`, 
+	- Content-Type - to informacja, jaki typ treści serwer zawiera, np. `Content-Type: text/html`, 
+	- Content-Length - informuje, jak długa jest treść, np. `Content-Length: 1234`, 
 	- Set-Cookie - serwer ustawia ciasteczko sesji, np. `Set-Cookie: session=abc345`, 
 	- Location - przy przekierowaniach informuje, dokąd iść, np. `https://exp.com/login`.
 
