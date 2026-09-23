@@ -81,7 +81,7 @@ Więc najpierw za pomocą szyfrowania asymetrycznego serwer i klient ustalają k
 	- Certyfikat serwera - podpisany przez Intermediate CA. Ponieważ system/przeglądarka nie wie, który Intermediate jest zaufany, serwer wysyła klientowi swój certyfikat oraz certyfikat Intermediate CA podpisany przez Root CA. Klient ma wbudowaną listę Root CA więc sprawdza czy certyfikat Intermediate jest podpisany przez zaufany Root CA. Jeśli tak - ufa Intermediate CA i sprawdza czy certyfikat serwera jest podpisany przez ten Intermediate CA i jeśli wszystko się zgadza ufa serwerowi. 
 
 ## SNI - Server Name Indication 
-SNI to nazwa domeny, którą klient wysyła w ClientHello. Jest to istotne ponieważ jeden serwer może obsługiwać wiele domen i to właśnie SNI mówi serwerowi, której domeny klient chce zobaczyć certyfikaty. Jest widoczne w handshake nawet jeśli dane są szyfrowane. Dzięki temu można sprawdzić z jaką domeną łączy się klient, 
+SNI to nazwa domeny, którą klient podaje w ClientHello. Jest to istotne ponieważ jeden serwer może obsługiwać wiele domen i to właśnie SNI mówi serwerowi, której domeny klient chce zobaczyć certyfikaty. Jest widoczne w handshake nawet jeśli dane są szyfrowane. Dzięki temu można sprawdzić z jaką domeną łączy się klient, 
 
 ## Co SOC może zobaczyć w HTTPS 
 - Co jest widoczne: 
