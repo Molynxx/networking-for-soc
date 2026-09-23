@@ -78,10 +78,10 @@ Więc najpierw za pomocą szyfrowania asymetrycznego serwer i klient ustalają k
 	`Root CA -> Intermediate CA -> Certyfikat serwera`    
 	- Root CA - główny urząd certyfikacji, który jest wbudowany w przeglądarki/systemy. Co to oznacza: Przeglądarki i systemy mają wbudowaną listę Root CA, więc nie musi sprawdzać czy dany urząd jest zaufany, tą listę już ma. 
 	-  Intermediate CA - pośrednik, upoważniony do wystawienia certyfikatu przez Root CA. Lista Intermediate CA nie jest wbudowana w systemy czy przeglądarki, więc klient nie wie, który Intermediate jest zaufany. 
-	- Certyfikat serwera - podpisany przez Intermediate CA. Ponieważ system/przeglądarka nie wie, który Intermediate jest zaufany, serwer wysyła klientowi swój certyfikat oraz certyfikat Intermediate CA podpisany przez Root CA. Klient, ma wbudowaną listę Root CA więc sprawdza czy certyfikat Intermediate jest podpisany przez zaufany Root CA. Jeśli tak - ufa Intermediate CA i sprawdza czy certyfikat serwera jest podpisany przez ten Intermediate CA i jeśli wszystko się zgadza ufa serwerowi. 
+	- Certyfikat serwera - podpisany przez Intermediate CA. Ponieważ system/przeglądarka nie wie, który Intermediate jest zaufany, serwer wysyła klientowi swój certyfikat oraz certyfikat Intermediate CA podpisany przez Root CA. Klient ma wbudowaną listę Root CA więc sprawdza czy certyfikat Intermediate jest podpisany przez zaufany Root CA. Jeśli tak - ufa Intermediate CA i sprawdza czy certyfikat serwera jest podpisany przez ten Intermediate CA i jeśli wszystko się zgadza ufa serwerowi. 
 
 ## SNI - Server Name Indication 
-SNI to nazwa domeny, do której klient wysyła ClientHello. Jest to istotne ponieważ jeden serwer może obsługiwać wiele domen i to właśnie SNI mówi serwerowi, której domeny klient chce zobaczyć certyfikaty. Jest widoczne w handshake nawet jeśli dane są szyfrowane. Dzięki temu można sprawdzić z jaką domeną łączy się klient, 
+SNI to nazwa domeny, którą klient wysyła w ClientHello. Jest to istotne ponieważ jeden serwer może obsługiwać wiele domen i to właśnie SNI mówi serwerowi, której domeny klient chce zobaczyć certyfikaty. Jest widoczne w handshake nawet jeśli dane są szyfrowane. Dzięki temu można sprawdzić z jaką domeną łączy się klient, 
 
 ## Co SOC może zobaczyć w HTTPS 
 - Co jest widoczne: 
@@ -101,8 +101,8 @@ SNI to nazwa domeny, do której klient wysyła ClientHello. Jest to istotne poni
 
 ## Zagrożenia związane z TLS
 Chociaż TLS sam w sobie jest bezpieczny, to jeśli nie jest poprawnie skonfigurowany, atakujący mogą wykorzystać:
-- fałszywe certyfikaty - czyli podszywać się pod serwer, 
+- fałszywe certyfikaty - czyli podszywanie się pod serwer, 
 - downgrade - czyli zmuszenie do użycia starszej, słabszej wersji TLS, 
-- self-signed certy - czyli certyfikat wystawiony przez serwer samemu sobie - często w malware, 
+- self-signed certy - certyfikat wystawiony przez serwer samemu sobie - często w malware, 
 - SNI spoofing - czyli podszywanie się pod domenę.  
 Szczegóły tych ataków i sposób ich wykrywania są opisane w folderze 04_tls. 
