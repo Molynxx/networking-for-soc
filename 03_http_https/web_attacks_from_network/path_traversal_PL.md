@@ -7,7 +7,7 @@ Zapoznanie się i zrozumienie mechaniki działania ataku Path Traversal (Directo
 Jest to atak, w którym atakujący wychodzi poza dozwolony katalog i odczytuje pliki systemowe lub inne, do których nie powinien mieć dostępu. 
 
 ## Cel 
-- odczytać pliki systemowe np.`/etc/passwd`, `/etc/shadow`, 
+- odczytać pliki systemowe np. `/etc/passwd`, `/etc/shadow`, 
 - odczytać pliki konfiguracyjne np. hasła i klucze API, 
 - uzyskać dostęp do plików poza katalogiem publicznym.
 
