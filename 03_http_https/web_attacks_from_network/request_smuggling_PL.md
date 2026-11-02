@@ -60,6 +60,6 @@ Backend ten fragment żądania widzi jako kolejne żądanie i wykonuje je jako �
 - ujednolicenie parsowania HTTP - najskuteczniejsza obrona to proxy i backend, które korzystają z tej samej logiki parsowania. Jeśli oba traktują `Content-Length` i `Transfer-Encoding` w ten sam sposób, atak się nie uda. 
 - odrzucanie żądań zawierających oba nagłówki jednocześnie - jeśli żądanie ma oba nagłówki, serwer powinien odrzucić takie żądania albo zignorować `Content-Length`, jeśli jest `Transfer-Encoding`. 
 - odrzucać nietypowe wartości `Transfer-Encoding` - akceptować tylko `chunked`, wszystko inne powinno być odrzucane,
-- WAF - nowoczesne WAF-y (Cloudflare, AWS WAF) potrafią wykrywać Request Smuggling i blokować żądania z obydwoma nagłówkami. Nie zastępuje to spójnego parsowani, ale stanowi dodatkową warstwę zabezpieczeń, 
+- WAF - nowoczesne WAF-y (Cloudflare, AWS WAF) potrafią wykrywać Request Smuggling i blokować żądania z obydwoma nagłówkami. Nie zastępuje to spójnego parsowania, ale stanowi dodatkową warstwę zabezpieczeń, 
 - korelacja logów SIEM - ustawienie alertów na różnicę liczby żądań między proxy a backendem z tego samego IP w krótkim czasie, 
 - ograniczenie dostępu do backendu - backend powinien przyjmować ruch tylko z proxy, nie bezpośrednio z internetu. Dzięki temu atakujący nie może ominąć proxy i wysyłać żądań bezpośrednio do backendu. 
