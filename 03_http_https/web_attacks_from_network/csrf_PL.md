@@ -30,7 +30,7 @@ Powyższy kod tworzy formularz, który ustawia przekierowanie wszystkich maili n
 - przeglądarka ofiary wysyła żądanie do poczty, ponieważ formularz wskazuje na `mail.example.com ` - więc przeglądarka automatycznie dołącza ciasteczko sesji poczty:
 	```
 	POST /settings/forwarding HTTP/1.1
-	host: mail.example.com
+	Host: mail.example.com
 	Cookie: session=abc123
 
 	forward_to=atakujacy@evil.com&enabled=true
@@ -51,7 +51,7 @@ Powyższy kod tworzy formularz, który ustawia przekierowanie wszystkich maili n
 - SameSite na ciasteczkach - serwer wysyła ciasteczko z flagą `Set-Cookie: session=abc123; SameSite=Strict` - to oznacza, że ciasteczko nie jest wysyłane przy żadnym żądaniu z obcej strony, (np. ze strony atakującego), 
 - sprawdzanie `Origin`/`Referer` - serwer sprawdza, czy żądanie przyszło z tej samej domeny, jeśli nie, odrzuca, 
 - potwierdzenie przy wrażliwych akcjach - np. przy zmianie hasła, dodaniu przekierowania lub filtra - wymagane jest ponowne wpisanie hasła lub kodu SMS, 
-- powiadomienia o zmianach - mail do ofiary "zmieniono ustawienie X..", co pozwala ofierze na reakcję, 
+- powiadomienia o zmianach - mail do ofiary "zmieniono ustawienie X", co pozwala ofierze na reakcję, 
 - WAF - blokuje żądania bez prawidłowego referer / origin lub bez tokenu CSRF, 
 - krótkie sesje - sesja wygasa po X minutach bezczynności, 
 - wylogowywanie się - to najprostsza metoda obrony przed tym atakiem, ponieważ atak nie zadziała jeśli użytkownik nie jest zalogowany. 
