@@ -8,7 +8,7 @@ Brute force to atak polegający na zgadywaniu hasła, wypróbowując wiele kombi
 - Brute force - próba wszystkich kombinacji, 
 - Dictionary attack - próby słów ze słownika (np. hasło, qwerty, admin),
 - Credential stuffing - próba wykorzystania loginów i haseł wykradzionych z innych stron, 
-- Password spraying - próba jednego typowego hasła na wielu kontach. Typowego, bo w password spraying atakujący używa popularnego hasła, np. "Lato2026!", a nie losowego, żeby  nie zablokować kont. 
+- Password spraying - próba jednego typowego hasła na wielu kontach. Typowego, bo w password spraying atakujący używa popularnego hasła, np. "Lato2026!", a nie losowego, żeby nie zablokować kont. 
 
 ## Cel ataku
 - dostanie się na konto, do bazy danych, SSH, poczty.
@@ -20,7 +20,7 @@ Brute force to atak polegający na zgadywaniu hasła, wypróbowując wiele kombi
 Wszystko to przez formularz logowania (najczęściej POST /login). 
 
 ## Jak wykryć
-- jeśli analiza logów pokaże wiele `401 Unauthorized` z jednego IP w krótkim czasie na to samo konto, wskazuje to atak brute force. Jeśli na końcu zdarzeń `401` pokaże się wpis `200 OK`, to atak zakończył się powodzeniem. Inne czerwone flagi w tym ataku to także nietypowe godziny oraz narzędzia typu `hydra`(program do brute force), `curl` (program wiersza poleceń do wysyłania żądań HTTP), `python-requests` (biblioteka Pythona do wysyłania żądań HTTP) - w logach widać je jako `User-Agent`, np. `User-Agent: curl/7.88.1`.  
+- jeśli analiza logów pokaże wiele `401 Unauthorized` z jednego IP w krótkim czasie na to samo konto, wskazuje to atak brute force. Jeśli na końcu zdarzeń `401` pokaże się wpis `200 OK`, to atak zakończył się powodzeniem. Inne czerwone flagi w tym ataku to także nietypowe godziny oraz narzędzia typu `hydra` (program do brute force), `curl` (program wiersza poleceń do wysyłania żądań HTTP), `python-requests` (biblioteka Pythona do wysyłania żądań HTTP) - w logach widać je jako `User-Agent`, np. `User-Agent: curl/7.88.1`.  
 
 ## Jak się bronić 
 - Rate limiting - ograniczenie liczby prób logowania z jednego IP, 
