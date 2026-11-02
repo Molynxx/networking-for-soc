@@ -22,7 +22,7 @@ Następnie baza szuka wiersza, w którym występuje login 'jan' i hasło 'jan123
 		- `login = ''` pusty, nic nie zostanie znalezione, 
 		- `OR 1=1` - zawsze prawda, 
 		- `--` - to znak komentarza, wszystko co występuje po nim jest ignorowane, 
-		- co więc mówi polecenie: szukaj we wszystkich kolumnach w tabeli users, gdzie login jest pusty lub 1=1 (zdanie logiczne (tautologia) - zawsze prawda), ignoruj wszystko co jest dalej.
+		- co więc mówi polecenie: szukaj we wszystkich kolumnach w tabeli users, gdzie login jest pusty lub 1=1 (zdanie logiczne - tautologia - zawsze prawda), ignoruj wszystko co jest dalej.
 - aplikacja bierze pierwszy wynik ze zwróconej przez bazę listy (często admina, z powodu alfabetycznego ustawienia wpisów) i loguje na nim atakującego. Atakujący dostaje sesję, nie dane do logowania. 
 
 ## Jak wykryć
