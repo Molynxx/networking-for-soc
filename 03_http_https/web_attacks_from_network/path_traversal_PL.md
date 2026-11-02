@@ -7,7 +7,7 @@ Zapoznanie się i zrozumienie mechaniki działania ataku Path Traversal (Directo
 Jest to atak, w którym atakujący wychodzi poza dozwolony katalog i odczytuje pliki systemowe lub inne, do których nie powinien mieć dostępu. 
 
 ## Cel 
-- odczytać pliki systemowe np: `/etc/passwd`, `/etc/shadow`, 
+- odczytać pliki systemowe np.`/etc/passwd`, `/etc/shadow`, 
 - odczytać pliki konfiguracyjne np. hasła i klucze API, 
 - uzyskać dostęp do plików poza katalogiem publicznym.
 
@@ -18,14 +18,14 @@ Jest to atak, w którym atakujący wychodzi poza dozwolony katalog i odczytuje p
 		- `..` - idź katalog wyżej, 
 		- `../` - idź poziom wyżej, 
 		- `../../` - idź dwa poziomy wyżej, 
-		- `../../etc/passwd` - wyjdź dwa poziomy wyżej i wejdź do `/etc/passwd`.  
+		- `../../etc/passwd` - wyjdź dwa poziomy wyżej, wejdź do `/etc` i odczytaj plik `passwd`.  
 		Serwer odczytuje plik i wysyła go atakującemu. 
 - są sytuacje kiedy atakujący chcąc ominąć filtry używa różnych zapisów - mają to samo znaczenie lecz inny zapis:
 	- `../` - klasyczny zapis, 
 	- `..%2f` - zapis z zakodowanym slash, 
 	- `%2e%2e%2f` - zapis z zakodowanymi dwiema kropkami i slash, 
 	- `....//` - zapis z podwójnymi kropkami i slash - próba ominięcia filtra który usuwa `../`, 
-	- ```..\``` - stosowany w Windows gdzie ścieżka jest podzielona backslash a nie slash. 
+	- `..\` - stosowany w Windows gdzie ścieżka jest podzielona backslash a nie slash. 
 
 ## Jak wykryć
 - monitorowanie parametrów występujących w żądaniach, jeśli występuje w nich:
@@ -39,7 +39,7 @@ Jest to atak, w którym atakujący wychodzi poza dozwolony katalog i odczytuje p
 	- `GET /download?file=..%2f..%2fetc%2fpasswd HTTP/1.1`
 
 ## Jak się bronić
-- walidacja ścieżki - sprawdzanie czy ścieżka nie zawiera niedozwolonych znaków, znajdujących się na Blacklist, lub sprawdza czy użyte znaki są na whitelist. Jeśli ścieżka zawiera niedozwolone znaki, serwer blokuje żądanie, 
+- walidacja ścieżki - sprawdzanie czy ścieżka nie zawiera niedozwolonych znaków, znajdujących się na blacklist, lub sprawdza czy użyte znaki są na whitelist. Jeśli ścieżka zawiera niedozwolone znaki, serwer blokuje żądanie, 
 - whitelist plików - pozwalanie na dostęp tylko do określonych na liście plików, 
 - Chroot/sandbox - zamknięcie aplikacji w katalogu, z którego nie da się wyjść, 
 - brak bezpośredniego dostępu do plików - czyli serwerowanie plików przez ID, a nie przez ścieżkę,  
