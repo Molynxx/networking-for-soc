@@ -1,10 +1,10 @@
 # csrf
 
 ## Cel
-Poznanie mechaniki działania ataku Cross-Site Request Forgery (CSRF) sposobów jego wykrywania i zabezpieczenia się przed nim. 
+Poznanie mechaniki działania ataku Cross-Site Request Forgery (CSRF), sposobów jego wykrywania i zabezpieczenia się przed nim. 
 
-## Co to jest:
-- to atak, w którym atakujący zmusza zalogowaną ofiarę do wykonania niechcianej akcji na stronie, na której jest zalogowana. Atakujący nie kradnie ciasteczka, lecz wykorzystuje to, że przeglądarka automatycznie dołącza ciasteczko do każdego żądania skierowanego do danej strony. 
+## Co to jest
+To atak, w którym atakujący zmusza zalogowaną ofiarę do wykonania niechcianej akcji na stronie, na której jest zalogowana. Atakujący nie kradnie ciasteczka, lecz wykorzystuje to, że przeglądarka automatycznie dołącza ciasteczko do każdego żądania skierowanego do danej strony. 
 
 ## Cel ataku (przykład dla poczty email)
 - zmiana hasła ofiary,
@@ -30,7 +30,7 @@ Powyższy kod tworzy formularz, który ustawia przekierowanie wszystkich maili n
 - przeglądarka ofiary wysyła żądanie do poczty, ponieważ formularz wskazuje na `mail.example.com ` - więc przeglądarka automatycznie dołącza ciasteczko sesji poczty:
 	```
 	POST /settings/forwarding HTTP/1.1
-	hist: mail.example.com
+	host: mail.example.com
 	Cookie: session=abc123
 
 	forward_to=atakujacy@evil.com&enabled=true
@@ -47,11 +47,11 @@ Powyższy kod tworzy formularz, który ustawia przekierowanie wszystkich maili n
 - zmiana IP w trakcie jednej sesji - jeśli ta sama sesja nagle pojawia się z innego IP niż zwykle to zawsze jest podejrzane, to może być CSRF z innej lokalizacji albo session hijacking. 
 
 ## Jak się bronić
-- token CSRF - działa to tak, że serwer generuje token dla każdej sesji i wstawia go do formularza jako ukryte pole. Przy odbiorze żądania sprawdza, czy token się zgadza. Atakujący nie może odczytać tokenu z formularza ofiary, bo blokują go same-origin policy - przeglądarka nie pozwala stronie atakującego czytać treści z innej domeny. Więc atakujący nie może wstawić go do żądania, a bez tego tokenu serwer nie zaakceptuje zmian. Zalogowany użytkownik na swojej poczcie nie widzi tego tokenu, jest on ukrytym polem w formularzu, więc gdy użytkownik zapisuje ustawienia token leci razem z żądaniem. Formularz atakującego nie zawiera tokenu więc wszelkie zmiany nie zostaną zatwierdzone na serwerze, 
+- token CSRF - działa to tak, że serwer generuje token dla każdej sesji i wstawia go do formularza jako ukryte pole. Przy odbiorze żądania sprawdza, czy token się zgadza. Atakujący nie może odczytać tokenu z formularza ofiary, bo blokuje go same-origin policy - przeglądarka nie pozwala stronie atakującego czytać treści z innej domeny. Więc atakujący nie może wstawić go do żądania, a bez tego tokenu serwer nie zaakceptuje zmian. Zalogowany użytkownik na swojej poczcie nie widzi tego tokenu, jest on ukrytym polem w formularzu, więc gdy użytkownik zapisuje ustawienia token leci razem z żądaniem. Formularz atakującego nie zawiera tokenu więc wszelkie zmiany nie zostaną zatwierdzone na serwerze, 
 - SameSite na ciasteczkach - serwer wysyła ciasteczko z flagą `Set-Cookie: session=abc123; SameSite=Strict` - to oznacza, że ciasteczko nie jest wysyłane przy żadnym żądaniu z obcej strony, (np. ze strony atakującego), 
 - sprawdzanie `Origin`/`Referer` - serwer sprawdza, czy żądanie przyszło z tej samej domeny, jeśli nie, odrzuca, 
 - potwierdzenie przy wrażliwych akcjach - np. przy zmianie hasła, dodaniu przekierowania lub filtra - wymagane jest ponowne wpisanie hasła lub kodu SMS, 
-- powiadomienia o zmianach - mail do ofiary "zmieniono ustawienie x..", co pozwala ofierze na reakcję, 
+- powiadomienia o zmianach - mail do ofiary "zmieniono ustawienie X..", co pozwala ofierze na reakcję, 
 - WAF - blokuje żądania bez prawidłowego referer / origin lub bez tokenu CSRF, 
-- krótkie sesje  - sesja wygasa po C minutach bezczynności, 
+- krótkie sesje - sesja wygasa po X minutach bezczynności, 
 - wylogowywanie się - to najprostsza metoda obrony przed tym atakiem, ponieważ atak nie zadziała jeśli użytkownik nie jest zalogowany. 
