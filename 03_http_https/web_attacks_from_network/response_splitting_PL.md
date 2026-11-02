@@ -1,13 +1,13 @@
 # response_splitting
 
 ## Cel
-Poznanie i zrozumienie mechaniki ataku Response Splitting (HTTP Response Splitting) oraz poznanie sposobów jego wykrycia i zapobieganiu mu.
+Poznanie i zrozumienie mechaniki ataku Response Splitting (HTTP Response Splitting) oraz poznanie sposobów jego wykrycia i zapobiegania mu.
 
 ## Co to jest 
 To atak, w którym atakujący wstrzykuje znaki CRLF (`\r\n`) do wartości nagłówka HTTP, żeby "rozciąć" odpowiedź serwera i dodać własną. CRLF to znaki, które w protokole HTTP oznaczają koniec linii a podwójny CRLF (`\r\n\r\n`) oznacza koniec nagłówków i początek ciała. Jeśli atakujący wstrzyknie je do nagłówka, serwer uzna, że nagłówki się skończyły i wszystko, co atakujący dopisał dalej potraktuje jako odpowiedź. 
 
 ## Cel
-- wstrzyknięcie własnej odpowiedzi - np. fałszywą stronę logowania, komunikat, 
+- wstrzyknięcie własnej odpowiedzi - np. fałszywej strony logowania, komunikat, 
 - zatrucie cache - jeśli proxy buforuje odpowiedź, kolejni użytkownicy dostaną wstrzykniętą odpowiedź, 
 - ustawienie ciasteczka - np. nadpisać sesję ofiary, 
 - wykonanie XSS - wstrzyknięcie `<script>` w ciało odpowiedzi, 
@@ -29,7 +29,7 @@ Jeśli aplikacja wstawia dane użytkownika do nagłówka (np. Location) bez spra
 	Location: /strona
 	```
 - atakujący wpisuje `\r\n` w parametr: `?url=/strona%0d%0a%0d%0aHTTP/1.1%20200%20OK%0d%0aContent-Type:%20text/html;%0d%0a%0d%0a<html>fałszywastrona</html>` - `%0d%0a` - to zakodowane `\r\n` (CRLF), `%20` - zakodowana spacja, 
-- serwer wstawia do to do nagłówka bez sprawdzenia:
+- serwer wstawia to do nagłówka bez sprawdzenia:
 	```
 	HTTP/1.1 302 Found
 	Location: /strona
