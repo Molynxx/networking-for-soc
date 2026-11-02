@@ -6,12 +6,12 @@ Poznanie i zrozumienie mechaniki działania ataku Session Hijacking (przejęcie 
 ## Co to jest
 Atak ten polega na kradzieży przez atakującego ciasteczka sesji ofiary i użyciu go by podszyć się pod nią. 
 
-## Cel
+## Cel ataku
 - uzyskanie dostępu do konta bez znajomości hasła, 
 - wykonanie w imieniu ofiary akcji np. zlecenie przelewu, zmiana hasła, kradzież danych.
 
-## Działanie ataku: 
-- gdy ofiara loguje się na swoje konto dostaje ciasteczko sesji np: session=abc123, 
+## Działanie ataku 
+- gdy ofiara loguje się na swoje konto dostaje ciasteczko sesji np. session=abc123, 
 - atakujący kradnie to ciasteczko za pomocą np.:
 	- XSS - wstrzyknięcie JavaScript, który odczytuje `document.cookie` i wysyła do atakującego, 
 	- MitM - jeśli sieć nie jest zabezpieczona atakujący może podsłuchiwać ruch i przechwycić ciasteczko,
@@ -22,10 +22,10 @@ Atak ten polega na kradzieży przez atakującego ciasteczka sesji ofiary i użyc
 - po tych działaniach atakujący ma dostęp do konta ofiary, bez znajomości hasła. 
 
 ## Jak wykryć
-- jeśli ta sama sesja z dwóch różnych IP (to samo ciasteczko) - powinno budzić podejrzenia bo jedna osoba nie może być w dwóch miejscach na raz, 
+- jeśli ta sama sesja z dwóch różnych IP (to samo ciasteczko) - powinno budzić podejrzenia, bo jedna osoba nie może być w dwóch miejscach na raz, 
 - ta sama sesja z różnych `User-Agentów` (różne przeglądarki) - przeglądarki nie dziedziczą sesji, więc to mało prawdopodobne, że użytkownik uruchomił tę samą sesję w dwóch różnych przeglądarkach, 
-- nastąpiła nagła zmiana lokalizacji sesji - np IP początkowo z Polski a potem z USA może świadczyć o przejęciu sesji, choć to może być nagle włączony VPN, 
-- akcje sesji są wykonywane poza godzinami pracy ofiary, może wskazywać na to, że ktoś inny używa jej sesji. 
+- nastąpiła nagła zmiana lokalizacji sesji - np. IP początkowo z Polski a potem z USA może świadczyć o przejęciu sesji, choć to może być nagle włączony VPN, 
+- jeśli akcje sesji są wykonywane poza godzinami pracy ofiary, może to wskazywać na to, że ktoś inny używa jej sesji. 
 
 ## Jak się bronić
 - HTTPS - protokół ten szyfruje ciasteczka w tranzycie, więc MitM ich nie widzi, 
