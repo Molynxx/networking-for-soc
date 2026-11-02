@@ -28,7 +28,7 @@ Jeśli aplikacja wstawia dane użytkownika do nagłówka (np. Location) bez spra
 	HTTP/1.1 302 Found
 	Location: /strona
 	```
-- atakujący wpisuje `\r\n` w parametr: `?url=/strona%0d%0a%0d%0aHTTP/1.1%20200%20OK%0d%0aContent-Type:%20text/html;%0d%0a%0d%0a<html>fałszywastrona</html>` - `%0d%0a` - to zakodowane `\r\n` (CRLF), `%20` - zakodowana spacja, 
+- atakujący wpisuje `\r\n` w parametr: `?url=/strona%0d%0a%0d%0aHTTP/1.1%20200%20OK%0d%0aContent-Type:%20text/html%0d%0a%0d%0a<html>fałszywastrona</html>` - `%0d%0a` - to zakodowane `\r\n` (CRLF), `%20` - zakodowana spacja, 
 - serwer wstawia to do nagłówka bez sprawdzenia:
 	```
 	HTTP/1.1 302 Found
@@ -45,15 +45,15 @@ Jeśli aplikacja wstawia dane użytkownika do nagłówka (np. Location) bez spra
 ## Jak wykryć
 - access.log, WAF, proxy cache, SIEM,
 - zakodowane CRLF w parametrach - `%0d%0a`, `%0d`, `%0a` w URL to prawie zawsze próba wstrzyknięcia. Zwykły użytkownik nie wpisuje takich znaków w parametry nawet przypadkiem. Jeśli widać w logach takie znaki - należy sprawdzić na jaki endpoint trafiły i czy aplikacja je przetwarza, 
-- surowe `\r\n` w żądaniach - czasem atakujący nie kodują znaków, a wysyłają surowe w URL lub nagłówkach. W logach widać to jak wieloliniowe żądanie - co nie zdarza się normalnie, to czerwona flaga, 
+- surowe `\r\n` w żądaniach - czasem atakujący nie kodują znaków, a wysyłają surowe w URL lub nagłówkach. W logach widać to jako wieloliniowe żądanie - co nie zdarza się normalnie, to czerwona flaga, 
 - parametry z `HTTP/1.1` lub `HTTP/1.0` w URL - oznacza, że atakujący próbuje dokleić nową odpowiedź. Zwykły użytkownik nie wpisuje w parametry wersji HTTP, 
 - parametry z nazwami nagłówków - `Set-Cookie`, `Location`, `Content-Type` w URL to próba wstrzyknięcia nagłówka. Jeśli pojawiają się w parametrach, należy sprawdzić, co aplikacja z nimi robi, 
-- nietypowe odpowiedzi w cache proxy - jeśli proxy buforuje odpowiedzi i nagle w cache pojawia się fałszywa strona, to może być skut3ek Response Splitting - wtedy warto porównać cache z rzeczywistą odpowiedzią backendu, 
+- nietypowe odpowiedzi w cache proxy - jeśli proxy buforuje odpowiedzi i nagle w cache pojawia się fałszywa strona, to może być skutek Response Splitting - wtedy warto porównać cache z rzeczywistą odpowiedzią backendu, 
 - korelacja - żądanie z CRLF w połączeniu z dziwną odpowiedzią dla innych może oznaczać zatrucie cache. 
 
 ## Jak się bronić
 - walidacja danych przed wstawieniem do nagłówka - to najskuteczniejsza obrona. Aplikacje powinny odrzucać dane, w których są zawarte `\r`, `\n` albo ich zakodowane wersje przed wstawieniem do nagłówka. 
-- escapowanie / sanityzacja - jeżeli dane muszą trafić do nagłówka, należy usunąć z nich `\r\n`. W wielu frameworkach są wbudowane funkcje, które to robią (np. `header()` w PHP od wersji 5.1.2 blokuje CRFL),
+- escapowanie / sanityzacja - jeżeli dane muszą trafić do nagłówka, należy usunąć z nich `\r\n`. W wielu frameworkach są wbudowane funkcje, które to robią (np. `header()` w PHP od wersji 5.1.2 blokuje CRLF),
 - WAF - nowoczesne WAF-y blokują payloady z `%0d%0a` i surowym CRLF, stanowią dobre uzupełnienie walidacji, 
 - konfiguracja proxy - proxy nie powinno buforować odpowiedzi, które mogą być zatrute, albo normalizować odpowiedzi przed zapisem do cache, 
 - aktualizacje - wiele podatności na Response Splitting wynikało z błędów w starych wersjach serwerów i frameworków, dlatego systematyczne aktualizacje łatają część problemów, 
