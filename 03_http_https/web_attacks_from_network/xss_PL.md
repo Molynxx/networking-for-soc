@@ -4,7 +4,7 @@
 Poznanie i zrozumienie mechaniki działania ataku XSS (Cross-Site Scripting), sposobów jego wykrycia oraz zabezpieczania się przed nim. 
 
 ## Co to jest
-XSS jest to atak polegający na wstrzyknięciu JavaScript do strony, którą widzi ofiara. Przeglądarka ofiary wykonuje ten kod, myśląc, że to kod do strony. By zrozumieć dobrze działanie tego ataku należy wyjaśnić czym jest i jak działa JavaScript. JavaScript to język programowania, który jest instrukcją dla przeglądarki jak ma wyświetlać stronę. JS ma dostęp do:
+XSS to atak polegający na wstrzyknięciu JavaScript do strony, którą widzi ofiara. Przeglądarka ofiary wykonuje ten kod, myśląc, że to kod strony. By zrozumieć dobrze działanie tego ataku należy wyjaśnić czym jest i jak działa JavaScript. JavaScript to język programowania, który jest instrukcją dla przeglądarki jak ma wyświetlać stronę. JS ma dostęp do:
 - ciasteczek (sesji),
 - treści strony (DOM), 
 - adresu URL, 
@@ -35,7 +35,7 @@ Kiedy użytkownik otwiera stronę, przeglądarka pobiera HTML i wykonuje zawarty
 - DOM-based XSS:
 	- tutaj istotne jest wyjaśnienie co to jest DOM: jest to struktura strony, którą przeglądarka trzyma w pamięci. To drzewo elementów `<html>`, `<body>`, `<div>`, `<p>`, itp. Kiedy przeglądarka dostaje HTML od serwera, buduje z niego DOM, czyli wewnętrzną reprezentację strony. JavaScript może czytać i zmieniać DOM (np. zmienić tekst w `<p>`, dodać nowy `<div>` lub usunąć jakiś element). 
 	- strona ma JavaScript napisany przez developera, który czyta dane z URL i wstawia je do strony. Np. `document.getElementById('output').innerHTML = location.hash;`. 
-		- wyjaśnienie kodu: weź wszystko po `#` z URL i wstaw do elementu  `<p id="output">`,
+		- wyjaśnienie kodu: weź wszystko po `#` z URL i wstaw do elementu `<p id="output">`,
 	- atakujący wysyła link z kodem po `#`, np. `https://example.com/#<script>...</script>`, 
 	- ofiara klika w link, 
 	- przeglądarka otwiera stronę, a serwer nie widzi nic co znajduje się po znaku `#`, 
@@ -50,10 +50,10 @@ Kiedy użytkownik otwiera stronę, przeglądarka pobiera HTML i wykonuje zawarty
 	- CSP (Content Security Policy) - to nagłówek, który mówi przeglądarce, jakie skrypty może wykonywać. Jeśli przeglądarka ofiary napotka zablokowany skrypt (np. ten wstrzyknięty przez atakującego), wysyła raport o naruszeniu na serwer. Ten raport zawiera informacje o zablokowanym skrypcie i stronie, na której wystąpił problem. Jednak to jest informacja już po fakcie, gdy atak już zadziałał, 
 	- Skanowanie bazy danych (prewencja) - okresowe skanowanie pól w bazie danych (np. komentarze, opisy profili) w poszukiwaniu znaków `<script>`, `onerror`, `javascript`, itp. pozwala wykryć złośliwe payloady, zanim ofiara je zobaczy. 
 	- SIEM i korelacja - można ustawić reguły, które korelują alerty z WAF i CSP. Np. jeśli WAF zgłosi próbę XSS, a następnie CSP zgłosi naruszenie z tego samego IP to atak jest potwierdzony. 
-- Reflected XSS: jest to łatwiejsze do wykrycia ponieważ jest widoczne w logach serwera, np.   
+- Reflected XSS: jest to łatwiejsze do wykrycia ponieważ jest widoczne w logach serwera, np. 
 	- `192.168.1.50 - - [18/Oct/2026:10:05:00] "GET /search?q=<script>alert(1)</script> HTTP/1.1" 200`  
 	URL jest logowany w całości, dlatego Reflected XSS jest łatwiejszy do wykrycia w logach - kod jest w adresie, a adres trafia do logów. 
-- DOM-based XSS: 
+- DOM-based XSS:
 	- raportowanie CSP - jeśli przeglądarka ma nagłówek CSP z dyrektywą report-uri lub report-to, przeglądarka ofiary automatycznie wyśle raport za każdym razem, gdy zablokuje wykonanie skryptu niezgodnego z polityką. raport zawiera m.in. adres URL strony, na której doszło do naruszenia oraz szczegóły zablokowanego skryptu,
 	- WAF może wyłapać eksfiltrację - ale to skutek, nie samo wstrzyknięcie.
 - czerwone flagi:
@@ -65,7 +65,7 @@ Kiedy użytkownik otwiera stronę, przeglądarka pobiera HTML i wykonuje zawarty
 	- `%3Cscript%3E` - zakodowany `<script>`, próba obejścia filtrów. 
 
 ## Jak się bronić
-- escapowanie danych: zamienia znaki specjalne na encje HTML np. `<` -> `&lt;`, `>` -> `&gt;`. Dzięki temu przeglądarka widzi tekst, a nie kod. 
+- escapowanie danych: zamienia znaki specjalne na encje HTML, np. `<` -> `&lt;`, `>` -> `&gt;`. Dzięki temu przeglądarka widzi tekst, a nie kod. 
 - Walidacja danych: sprawdzanie, czy dane mają sens, czyli czy id jest liczbą, czy email wygląda jak email. Dzięki temu atakujący nie może wpisać `<script>` w pole, które oczekuje tylko liter, 
 - Content Security Policy (CSP): to nagłówek HTTP mówiący przeglądarce, jakie skrypty może wykonać. Dzięki temu nieautoryzowane skrypty są blokowane a raporty o próbach naruszenia są wysyłane do serwera. Jednak CSP można obejść, jeśli używa białej listy domen (atakujący może wykorzystać zaufany skrypt np. JSONP). Dlatego lepsze jest `nonce` lub `hash` zamiast listy domen, 
 - HttpOnly na ciasteczkach: to flaga ciasteczka, która mówi przeglądarce: "JavaScript nie może odczytać tego ciasteczka". Dzięki temu nawet jeśli XSS się wykona, atakujący nie ukradnie sesji. To najważniejsza obrona przed skutkiem XSS. 
